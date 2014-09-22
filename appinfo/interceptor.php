@@ -65,12 +65,20 @@ class Interceptor {
 
 
 	function getNiceMessage($respons) {
+		// TODO introduce i10n
 		$fmt = array(
-			'uid.blacklisted' => "You are forbidden on this site. Please contact your administrator with this information: uid=%s.",
-			'group.blacklisted' => "Your group %s is forbidden on this site. Please contact your administrator with this information: group=%s.",
-			'not.whitelisted' => "You have no access to this site. Please contact your administrator with this information: uid=%s.",
+			'uid.blacklisted' 	=> "You do not have access to this service. Please contact your administrator with this information: uid=%s.",
+			'group.blacklisted' => "You do not have access to this service. Please contact your administrator with this information: uid=%s,group=%s.",
+			'not.whitelisted' 	=> "Access to this service is restricted. Please contact your administrator with this information: uid=%s.",
 			);
-		return sprintf($fmt[$respons->getCause()], $respons->getVars());
+		$key = $respons->getCause();
+		$sfmt = false;
+		if ( isset($fmt[$key])) $sfmt = $fmt[$key];
+		if ( $sfmt ) {
+			return sprintf($sfmt, $respons->getUid(), $respons->getGroup());
+		} else {
+			return 'cause: -'.$key;
+		}
 	}
 
 	function doesExit(){

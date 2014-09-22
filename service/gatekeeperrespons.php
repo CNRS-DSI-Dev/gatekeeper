@@ -24,7 +24,8 @@ namespace OCA\GateKeeper\Service;
 class GateKeeperRespons {
 
 	var $cause;
-	var $vars;
+	var $uid;
+	var $group;
 	var $denied = false;
 	var $emitted = false;
 
@@ -34,9 +35,10 @@ class GateKeeperRespons {
 	* @param mixed vars
 	* @return Respons itself (fluent)
 	*/
-	public function deny($cause, $vars) {
+	public function deny($cause, $uid, $group=null) {
 		$this->cause = $cause;
-		$this->vars = $vars;
+		$this->uid = $uid;
+		$this->group = $group;
 		$this->denied = true;
 		return $this;
 	}
@@ -57,8 +59,12 @@ class GateKeeperRespons {
 		return $this->emitted;
 	}
 
-	public function getVars() {
-		return $this->vars;
+	public function getUid() {
+		return $this->uid;
+	}
+
+	public function getGroup() {
+		return $this->group;
 	}
 
 	public static function yetGranted() {

@@ -93,7 +93,7 @@ class GateKeeperService {
 					return $respons;
 				}
 				if ( $blackList && ! $this->isGroupAllowed($g) ) {
-					return $respons->deny('group.blacklisted', $g);
+					return $respons->deny('group.blacklisted', $uid, $g);
 				}
 			}
 		}

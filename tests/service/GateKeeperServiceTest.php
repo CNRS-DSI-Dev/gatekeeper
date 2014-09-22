@@ -194,7 +194,7 @@ class GateKeeperServiceTests extends \PHPUnit_Framework_TestCase {
 		$this->assertTrue( ! is_null($respons));
 		$this->assertTrue( $respons->isDenied());
 		$this->assertEquals($respons->getCause(), 'not.whitelisted');
-		$this->assertEquals($respons->getVars(), 'uid0');
+		$this->assertEquals($respons->getUid(), 'uid0');
 
 	}
 
@@ -220,7 +220,7 @@ class GateKeeperServiceTests extends \PHPUnit_Framework_TestCase {
 		$this->assertTrue( ! is_null($respons));
 		$this->assertTrue( $respons->isDenied());
 		$this->assertEquals($respons->getCause(), 'not.whitelisted');
-		$this->assertEquals($respons->getVars(), 'uid0');
+		$this->assertEquals($respons->getUid(), 'uid0');
 
 	}
 
@@ -238,7 +238,7 @@ class GateKeeperServiceTests extends \PHPUnit_Framework_TestCase {
 		$this->assertTrue( ! is_null($respons));
 		$this->assertTrue( $respons->isDenied());
 		$this->assertEquals($respons->getCause(), 'uid.blacklisted');
-		$this->assertEquals($respons->getVars(), 'uid0');
+		$this->assertEquals($respons->getUid(), 'uid0');
 
 	}
 
@@ -249,7 +249,7 @@ class GateKeeperServiceTests extends \PHPUnit_Framework_TestCase {
 				array('uid0', 	GK::BLACKLIST_MODE, false)
 			),
 			array(
-				array('grp0', 	GK::BLACKLIST_MODE, true),
+				array('grp0', GK::BLACKLIST_MODE, true),
 				array('grp1', GK::BLACKLIST_MODE, false)
 			)
 		);
@@ -263,7 +263,7 @@ class GateKeeperServiceTests extends \PHPUnit_Framework_TestCase {
 		$this->assertTrue( ! is_null($respons));
 		$this->assertTrue( $respons->isDenied());
 		$this->assertEquals($respons->getCause(), 'group.blacklisted');
-		$this->assertEquals($respons->getVars(), 'grp0');
+		$this->assertEquals($respons->getGroup(), 'grp0');
 
 	}
 
