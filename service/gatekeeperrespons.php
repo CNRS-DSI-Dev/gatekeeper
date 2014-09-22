@@ -26,6 +26,7 @@ class GateKeeperRespons {
 	var $cause;
 	var $vars;
 	var $denied = false;
+	var $emitted = false;
 
 	/**
 	* Set respons in deny mode
@@ -43,12 +44,34 @@ class GateKeeperRespons {
 	public function isDenied(){
 		return $this->denied;
 	}
+
+	public function isAllow() {
+		return ! $this->denied;
+	}
 	
 	public function getCause() {
 		return $this->cause;
 	}
 
+	public function isEmitted() {
+		return $this->emitted;
+	}
+
 	public function getVars() {
 		return $this->vars;
 	}
+
+	public static function yetGranted() {
+		$r = new GateKeeperRespons();
+		$r->emitted = true;
+		return $r;
+	}
+
+	public static function yetDenied() {
+		$r = new GateKeeperRespons();
+		$r->emitted = true;
+		$r->denied = true;
+		return $r;
+	}
+
 }

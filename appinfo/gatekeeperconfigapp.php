@@ -35,7 +35,8 @@ class GateKeeperConfigApp extends App {
 		// Hooks
 		$container->registerService('GateKeeperHooks', function ($c) {
 			return new \OCA\GateKeeper\Hooks\GateKeeperHooks(
-				$c->query('GateKeeperService'),
+				//$c->query('GateKeeperService'),
+				$c->query('ServerContainer')->getSession(),
 				$c->query('Logger')
 				);
 		});
@@ -44,6 +45,7 @@ class GateKeeperConfigApp extends App {
 		$container->registerService('GateKeeperService', function ($c) {
 			return new \OCA\GateKeeper\Service\GateKeeperService(
 				$c->query('ServerContainer')->getAppConfig()->getValue('gatekeeper', 'mode', 'whitelist' ),
+				$c->query('ServerContainer')->getSession(),
 				$c->query('AccessObjectMapper'), 
 				$c->query('GroupManager')
 				);
@@ -63,8 +65,17 @@ class GateKeeperConfigApp extends App {
 				);
 		});
 
+		// - logger - 
 		$container->registerService('Logger', function($c) {
             return $c->query('ServerContainer')->getLogger();
+        });
+
+		$container->registerService('Interceptor', function($c) {
+            return new \OCA\GateKeeper\AppInfo\Interceptor(
+            		$c->query('ServerContainer')->getUserSession(),
+            		\OC_User::isLoggedIn(),
+            		$c->query('GateKeeperService')
+            	);
         });
 	}
 

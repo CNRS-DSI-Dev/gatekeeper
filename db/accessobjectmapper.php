@@ -44,7 +44,7 @@ class AccessObjectMapper extends Mapper {
 
     public function isGroupInMode($groupName, $mode) {
     	$sql = $this->getCommonSQL();
-		$params = array($groupName, GK::GROUP_KIND, $this->modeToInt($mode));
+		$params = array($groupName, GK::GROUP_KIND, $mode);
 		return $this->commonAnswer($sql, $params);
     }
 
@@ -57,7 +57,7 @@ class AccessObjectMapper extends Mapper {
 
     public function isUidInMode($uid, $mode) {
     	$sql = $this->getCommonSQL();
-		$params = array($groupName, GK::UID_KIND, $this->modeToInt($mode));
+		$params = array($uid, GK::UID_KIND, $mode);
 		return $this->commonAnswer($sql, $params);
     }
 

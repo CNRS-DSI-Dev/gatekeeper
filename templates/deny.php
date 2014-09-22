@@ -19,20 +19,10 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-namespace OCA\GateKeeper\AppInfo;
-
-if ( !  \OC_App::isEnabled( 'gatekeeper') ) return;
-
-$app = new GateKeeperConfigApp();
-$c = $app->getContainer();
-
-
-
-$app->getGroupManager()->addBackend( new \OC_Group_Database() );
-
-
-$hooks = $c->query('GateKeeperHooks');
-$hooks->registerForUserEvents( $app->getUserSession());
-$hooks->registerForGroupEvents( $app->getGroupManager());
-
-$c->query('Interceptor')->run();
+?>
+<div class="overlay">
+	<div class="error">
+		<h2><?php p($l->t('Access Denied'));?></h2>
+		<p><?php p($_['msg'])?></p>
+	</div>
+</div>

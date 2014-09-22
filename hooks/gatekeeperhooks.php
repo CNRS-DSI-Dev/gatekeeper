@@ -26,8 +26,8 @@ class GateKeeperHooks {
 	var $gateKeeperService;
 	var $logger;
 
-	public function __construct($gateKeeperService, $session, $logger) {
-		$this->service = $gateKeeperService;
+	public function __construct($session, $logger) {
+		//$this->service = $gateKeeperService;
 		$this->session = $session;
 		$this->logger = $logger;
 	}
@@ -37,9 +37,13 @@ class GateKeeperHooks {
 		$this->session->remove('gk_status');
 	}
 
+	function onLogout(){
+		$this->session->remove('gk_status');
+	}
+
 	function onPostLogin (\OC\User\User $user) {
 		$this->logger->info('onPostLogin '.$user);
-		$this->session->set('gk_status','login');
+		
 	}
 
 
@@ -60,6 +64,10 @@ class GateKeeperHooks {
 		$userSession->listen('\OC\User', 'postLogin', function($user, $password) use(&$obj) { 
 			return $obj->onPostLogin($user); 
 		});
+
+		$userSession->listen('\OC\User', 'logout', function() use(&$obj) { 
+			return $obj->onLogout(); 
+		});		
 	}
 
 	function registerForGroupEvents($groupManager) {

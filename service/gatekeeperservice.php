@@ -49,10 +49,14 @@ class GateKeeperService {
 	}
 
 
+	/**
+	 * @param \OC\User\User $user
+	 * @return \OCA\GateKeeper\Service\GateKeeperRespons
+	 */
 	public function checkUserAllowances($user) {
 		$status = $this->session->get('gk_status');
-		if ( ! is_null($status) && strcmp($status, 'ok')) return null;
-		if ( ! is_null($status) && strcmp($status, 'ko')) throw new \Exception('not allowed');
+		if ( ! is_null($status) && strcmp($status, 'ok') === 0 ) return GateKeeperRespons::yetGranted();
+		if ( ! is_null($status) && strcmp($status, 'ko') === 0 ) return GateKeeperRespons::yetDenied();
 
 		$respons = $this->isUserAllowed($user);
 		$status = ( $respons->isAllow() ) ? 'ok': 'ko';
