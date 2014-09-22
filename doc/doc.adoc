@@ -1,0 +1,70 @@
+= GateKeeper
+
+== Architecture
+
+Intercepter les logins et les affectations 
+
+Hooks disponibles
+
+* postLogin(\OC\User\User $user)
+* postAddUser(\OC\Group\Group $group, \OC\User\User $user)
+* postRemoveUser(\OC\Group\Group $group, \OC\User\User $user)
+
+== Logique
+
+* En mode liste blanche, il suffit d'une authorisation pour être ok
+* En mode liste noire, il suffit d'une interdiction pour être ko
+
+Séquence
+
+Positionnement d'un intercepteur qui vérifiera l'état d'un flag de session GK_STATUS
+
+.Etat du flag GK_STATUS
+[options="header"]
+|====
+| Valeur 	| Action 	| Commentaires
+| NULL		| Aucune	| En attente 
+| OK 		| Aucune	| Les tests sont pour l'instant valide
+| KO 		| logout()  | Les tests ne sont pas valides
+|====
+
+
+
+
+
+
+
+
+
+
+== Scénarios
+
+=== Mode Liste blanche
+Conditions:  pas d'ajout ou retrait de groupe
+
+. L'utilisateur se connecte
+. Après authentification, 
+	.. Si l'UID de l'utilisateur est dans la liste blanche alors il est autorisée. FIN
+	.. Sinon le service parcourt la liste des groupes de l'utilisateur
+	... Si il trouve un groupe autorisée, alors l'utilisateur est autorisé. FIN
+	.. Si aucun groupe ne remplit les conditions, l'utilisateur n'est pas autorisé
+. Si il trouve un groupe
+
+
+Comment signifier l'autorisation du à GateKeeper ?
+
+En le mentionnant dans les préférences utilisateurs.
+
+
+.Clefs
+[width="50%",options="header"]
+|=====
+|key|value|meaning
+|uid|wl|Autorisé
+|=====
+
+
+[source,PHP]
+----
+$app->getServer()->getConfig()->setUserValue($userId, $appName, $key, $value);
+----

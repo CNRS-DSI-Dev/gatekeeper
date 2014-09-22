@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<info>
+    <id>gatekeeper</id>
+    <name>GateKeeper</name>
+    <description>Open or close access according to group or uid</description>
+    <version>1.0</version>
+    <licence>AGPL</licence>
+    <author>Marc DeXeT</author>
+    <require>7.0</require>
+    <types>
+    	<type>prelogin</type>
+    </types>
+</info>
