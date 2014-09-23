@@ -21,10 +21,24 @@
  */
 namespace OCA\GateKeeper\AppInfo;
 
-if ( !  \OC_App::isEnabled( 'gatekeeper') ) return;
+if ( !  \OC_App::isEnabled( 'gatekeeper') ) {
+	return;
+}
+
+\OCP\App::registerAdmin('gatekeeper','settings/admin');
+
 
 $app = new GateKeeperConfigApp();
+
+if ( !$app->isGateActivated() ) {
+	return;
+}
+
 $c = $app->getContainer();
+
+if ( $c->isAdminUser() ) {
+	return;
+}
 
 
 

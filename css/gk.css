@@ -1,0 +1,30 @@
+.gk_block {
+    width: 800px;
+}
+
+.gk_block input[type=text] {
+    width: 500px;
+}
+
+.gk_block label { 
+  display: inline-block; 
+  width: 250px; 
+  text-align: right; 
+  margin-right: 15px;
+}
+
+.gk_block pre { 
+  margin-left: 250px;
+}
+
+.gk_changed {
+  background: lightYellow; 
+}
+
+.gk_saved {
+  background: lightGreen; 
+}
+
+.gk_error {
+  background: lightCoral;
+}

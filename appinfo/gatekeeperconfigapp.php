@@ -21,6 +21,7 @@
  */
 namespace OCA\GateKeeper\AppInfo;
 use \OCP\AppFramework\App;
+use \OCA\GateKeeper\AppInfo\GKConstants as GK;
 
 /**
  *
@@ -44,7 +45,7 @@ class GateKeeperConfigApp extends App {
 		// Service
 		$container->registerService('GateKeeperService', function ($c) {
 			return new \OCA\GateKeeper\Service\GateKeeperService(
-				$c->query('ServerContainer')->getAppConfig()->getValue('gatekeeper', 'mode', 'whitelist' ),
+				$c->query('ServerContainer')->getAppConfig()->getValue('gatekeeper', 'mode' ),
 				$c->query('ServerContainer')->getSession(),
 				$c->query('AccessObjectMapper'), 
 				$c->query('GroupManager')
@@ -77,6 +78,14 @@ class GateKeeperConfigApp extends App {
             		$c->query('GateKeeperService')
             	);
         });
+
+
+        $container->registerService('SettingsController', function($c) {
+            return new \OCA\GateKeeper\Controller\SettingsController(
+            		$c->query('Request'),
+            		$c->query('ServerContainer')->getAppConfig()
+            	);
+        });
 	}
 
 
@@ -94,5 +103,13 @@ class GateKeeperConfigApp extends App {
 
 	public function getGroupManager() {
 		return $this->getContainer()->query('GroupManager');	
+	}
+
+	public function isGateActivated() {
+		 $mode = $this->getContainer()->getServer()->getAppConfig()->getValue('gatekeeper', 'mode' );
+		 if ( ! is_null($mode) && strcmp($mode, GK::OPENED_GATE_MODE) != 0  ) {
+		 	return true;
+		 }
+		 return false;
 	}
 }

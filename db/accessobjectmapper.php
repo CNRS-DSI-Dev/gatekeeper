@@ -39,7 +39,7 @@ class AccessObjectMapper extends Mapper {
     }
 
     public function modeToInt($mode) {
-    	return ($mode) ? GK::WHITELIST_MODE : GK::BLACKLIST_MODE;
+    	return ($mode) ? GK::WHITELIST_MODE_INT : GK::BLACKLIST_MODE_INT;
     }
 
     public function isGroupInMode($groupName, $mode) {
@@ -63,8 +63,9 @@ class AccessObjectMapper extends Mapper {
 
     public function isManagerGroup($g) {
     	$sql = $this->getCommonSQL();
-		$params = array($groupName, GK::GROUP_KIND, GK::MANAGER_MODE);
+		$params = array($groupName, GK::GROUP_KIND, GK::MANAGER_MODE_INT);
 		return $this->commonAnswer($sql, $params);
     }
+
 
 }

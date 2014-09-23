@@ -19,26 +19,18 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-namespace OCA\GateKeeper\AppInfo;
+$tmpl = new OCP\Template('gatekeeper', 'settings-admin');
+ $appName='gatekeeper';
+ $array = array(
+	'version', 
+	'text',
+	'url',
+	'msg',
+	'start_page_url',
+	'start_page_message'
+);
 
-class GKConstants {
-	
-	const UID_KIND 		= 1;
-	const GROUP_KIND 	= 2;
-	const WHITELIST_MODE_INT= 1;
-	const BLACKLIST_MODE_INT= 2;
-	const MANAGER_MODE_INT	= 9;
-	const WHITELIST_MODE = 'whitelist';
-	const BLACKLIST_MODE = 'blacklist';
-	const OPENED_GATE_MODE = 'opened';
-
-
-	public static function checkMode($mode) {
-		if ($mode == GKConstants::WHITELIST_MODE 
-			|| $mode == GKConstants::BLACKLIST_MODE 
-			|| $mode == GKConstants::OPENED_GATE_MODE ) { 
-			return true;
-		}
-		return false;
-	}
+foreach ($array as $key) {
+	$tmpl->assign($key, OCP\Config::getAppValue($appName, $key));
 }
+ return $tmpl->fetchPage();

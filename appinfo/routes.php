@@ -21,24 +21,14 @@
  */
 namespace OCA\GateKeeper\AppInfo;
 
-class GKConstants {
-	
-	const UID_KIND 		= 1;
-	const GROUP_KIND 	= 2;
-	const WHITELIST_MODE_INT= 1;
-	const BLACKLIST_MODE_INT= 2;
-	const MANAGER_MODE_INT	= 9;
-	const WHITELIST_MODE = 'whitelist';
-	const BLACKLIST_MODE = 'blacklist';
-	const OPENED_GATE_MODE = 'opened';
-
-
-	public static function checkMode($mode) {
-		if ($mode == GKConstants::WHITELIST_MODE 
-			|| $mode == GKConstants::BLACKLIST_MODE 
-			|| $mode == GKConstants::OPENED_GATE_MODE ) { 
-			return true;
-		}
-		return false;
-	}
-}
+$app = new GateKeeperConfigApp();
+// cf. https://github.com/owncloud/documentation/blob/master/developer_manual/app/routes.rst
+$app->registerRoutes($this, array(
+ 	'routes' => array(
+ 			
+ 			array('name' => 'settings#set_mode'	, 'url' =>	'/api/settings/mode/'	,   'verb' => 'POST'),
+ 			array('name' => 'settings#search_group'	, 'url' =>	'/api/settings/group'	,   'verb' => 'GET')
+ 			
+ 		)
+ 	)
+ );

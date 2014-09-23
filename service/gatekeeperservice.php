@@ -33,8 +33,8 @@ class GateKeeperService {
 	public function __construct($mode, $session, $accessObjectMapper, $groupManager) {
 		if ( is_string($mode) ) {
 			$intMode = 0;
-			if( strcmp($mode, 'whitelist')) $intMode = GK::WHITELIST_MODE;
-			if( strcmp($mode, 'blacklist')) $intMode = GK::BLACKLIST_MODE;
+			if( strcmp($mode, 'whitelist')) $intMode = GK::WHITELIST_MODE_INT;
+			if( strcmp($mode, 'blacklist')) $intMode = GK::BLACKLIST_MODE_INT;
 			if ( $intMode === 0 ) {
 				throw new \Exception("Mode $mode is not valid", 1);	
 			}
@@ -105,7 +105,7 @@ class GateKeeperService {
 
 
 	public function isModeAllow() {
-		return $this->mode === GK::WHITELIST_MODE;
+		return $this->mode === GK::WHITELIST_MODE_INT;
 	}
 
 	public function isGroupAllowed($groupName) {
