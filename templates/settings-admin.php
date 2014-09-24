@@ -47,11 +47,14 @@ $selected[$_['selected']] = 'selected';
 				</div>
 			</fieldset>
 			<fieldset id="gkTabs-2">
-				<a href="#" id="gkLoadWhitelist"><?php p($l->t('load list'));?></a>
+				<button type="button" id="gkLoadButton_whitelist"><?php p($l->t('load list'));?></button>
 				<ul id="gkList_whitelist">
 				</ul>
 			</fieldset>
 			<fieldset id="gkTabs-3">
+				<button type="button" id="gkLoadButton_blacklist"><?php p($l->t('load list'));?></button>
+				<ul id="gkList_blacklist">
+				</ul>
 			</fieldset>
 		</div>
 	</form>

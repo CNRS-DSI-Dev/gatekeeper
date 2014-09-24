@@ -19,7 +19,9 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-class AccessObjectEntity extends OCP\AppFramework\Db\Entity {
+namespace OCA\GateKeeper\Db;
+
+class AccessObject extends \OCP\AppFramework\Db\Entity {
 	
 	protected $name;
 	/**
@@ -27,7 +29,7 @@ class AccessObjectEntity extends OCP\AppFramework\Db\Entity {
 	* '1' -> uid
 	* '2' -> group
 	*/
-	protected $type;
+	protected $kind;
 	/**
 	* Mode is 1 char value
 	* '9' -> manager

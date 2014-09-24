@@ -65,13 +65,46 @@ $('#gatekeeperForm') .ready(function () {
 
 
   var loadGroupByMode = function(mode) {
+
+    $('#gkLoadButton_'+mode).addClass('loading');
+
+    var liOnClick = function(e){
+      var anchor = $(e.target).parent();
+      var li = anchor.parent();
+      var anchorId = anchor.attr('id');
+      var parts = anchorId.split('_');
+      var grpId = parts[parts.length - 1 ];
+      var mode = parts[parts.length - 2 ];
+
+      li.removeClass('gk_changed gk_error gk_saved');
+      li.addClass('gk_changed');
+
+      $.post(groupUrl, {group: grpId, action: 'rm', mode: mode })
+      .done(function(data){
+        var name = li.find('span').text();
+        echo('removed '+name+' from '+mode);
+        li.removeClass('gk_changed gk_error gk_saved');
+        li.addClass('gk_saved');
+        li.removeClass('gk_saved', 2000);
+        li.remove();
+      })
+      .fail(function(jqXHR,  textStatus, errorThrown){
+        li.removeClass('gk_changed gk_error gk_saved');
+        li.addClass('gk_error');
+        $('#gk_settingsError') .text(jqXHR.responseJSON.msg);
+      })
+    }
     
     var list = $('#gkList_'+mode);
     $.get(groupUrl, { mode: mode} ).done(function(data){
+      $('#gkLoadButton_'+mode).removeClass('loading');
       for (var i=0; i<data.length; i++) {
         var grp = data[i];
-        var liName = 'gkList_'+mode+'_'+grp;
-        list.append('<li id="'+liName+'"><a href="#">'+grp+'</a></li>');
+        var id = 'gk_action_'+mode+'_'+grp.id;
+        //<a class="action delete"><img src="/core/core/img/actions/delete.svg" class="svg action"></a>
+        var li = $('<li><a id="'+id+'" class="action delete"><img src="/core/core/img/actions/delete.svg" class="svg action"></a><span>'+grp.name+'</span></li>');
+        li.appendTo(list);
+        li.click(liOnClick);
       }
     })
     .fail(function(jqXHR,  textStatus, errorThrown){
@@ -80,23 +113,13 @@ $('#gatekeeperForm') .ready(function () {
 
   }
 
-
-  $('#gkList_whitelist :a').click(function(e){
-    var group = $(e.target).text();
-    $.post(groupUrl, {group: group, action: 'rm'})
-    .done(function(data){
-      echo('ok');
-    })
-    .fail(function(jqXHR,  textStatus, errorThrown){
-      $('#gk_settingsError').text(textStatus);
-    })
-  });
-
-
-  $('#gkLoadWhitelist').click(function(e) {
+  $('#gkLoadButton_whitelist').click(function(e) {
     loadGroupByMode('whitelist');
   });
 
+  $('#gkLoadButton_blacklist').click(function(e) {
+    loadGroupByMode('blacklist');
+  });
 
 
 });

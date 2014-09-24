@@ -25,7 +25,8 @@ namespace OCA\GateKeeper\Controller;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Http;
-use \OCA\GateKeeper\AppInfo\GKConstants as GK;
+use OCA\GateKeeper\AppInfo\GKConstants as GK;
+use OCA\GateKeeper\Db\AccessObject;
 /**
 *
 */
@@ -74,14 +75,14 @@ class SettingsController extends Controller {
 		}
 		// Comment avoir les groupes ?
 
-		$names = $this->accessObjectMapper->findGroupNamesInMode(GK::modeToInt($mode));
-/*		$array = array();
-		if ( $names ) {
-			foreach ($names as $name) {
-				$array[] = array('label' => $name);
+		$groups = $this->accessObjectMapper->findGroupsInMode(GK::modeToInt($mode));
+		$array = array();
+		if ( $groups ) {
+			foreach ($groups as $group) {
+				$array[] = array('id' => $group->getId(), 'name' => $group->getName());
 			}
-		}*/
-		return new JSONResponse( $names );
+		}
+		return new JSONResponse( $array );
 	}	
 
 
@@ -90,7 +91,7 @@ class SettingsController extends Controller {
 	*/
 	public function manageGroup() {
 		\OC_Util::checkAdminUser();
-		params = $this->request->post;
+		$params = $this->request->post;
 		$group = isset($params['group']) ? $params['group'] : null;
 		$action = isset($params['action']) ? $params['action'] : null;
 		$mode = isset($params['mode']) ? $params['mode'] : null;
@@ -99,7 +100,8 @@ class SettingsController extends Controller {
 		}
 		switch ($action) {
 			case 'rm':
-				$this->accessObjectMapper->findGroupNamesInMode(GK::modeToInt($mode));
+				$ao = AccessObject::fromParams(array('id' => $group));
+				$this->accessObjectMapper->delete($ao);
 				break;
 			case 'add':
 				# code...
