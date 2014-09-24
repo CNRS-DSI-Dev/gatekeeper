@@ -47,17 +47,9 @@ $selected[$_['selected']] = 'selected';
 				</div>
 			</fieldset>
 			<fieldset id="gkTabs-2">
-				<div class="ui-widget">
-					<label for="searchGroupField">Access Group: </label>
-					<input id="searchGroupField">
-					<a href="#" name="gkGroupAction_WL" class="action"><?php p($l->t('load action'));?></a>
-					<div id="gkShowGroup_WL"></div>
-				</div>
-				<div id="editGroup" class="block" style="display: none !important">
-					<label for="group"></label>
-					<input type="button" value="deny">
-					<input type="button" value="forget">
-				</div>
+				<a href="#" id="gkLoadWhitelist"><?php p($l->t('load list'));?></a>
+				<ul id="gkList_whitelist">
+				</ul>
 			</fieldset>
 			<fieldset id="gkTabs-3">
 			</fieldset>

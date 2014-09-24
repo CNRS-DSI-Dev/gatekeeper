@@ -65,19 +65,50 @@ class SettingsController extends Controller {
 	public function searchGroup() {
 		\OC_Util::checkAdminUser();
 		$params = $this->request->get;
-		$value = isset($params['term']) ? $params['term'] : null;
-		if ( is_null($value) )  {
-			return new JSONResponse( array() );
+		$mode = isset($params['mode']) ? $params['mode'] : null;
+		if ( is_null($mode) )  {
+			return new JSONResponse( array("msg" => "mode is not specified"), Http::STATUS_BAD_REQUEST);
+		}
+		if ( ! GK::checkMode($mode) ) {
+			return new JSONResponse( array("msg" => "mode is not valid"), Http::STATUS_BAD_REQUEST);
 		}
 		// Comment avoir les groupes ?
 
-		$names = $this->accessObjectMapper->findGroupNamesLike($value);
-		$array = array();
+		$names = $this->accessObjectMapper->findGroupNamesInMode(GK::modeToInt($mode));
+/*		$array = array();
 		if ( $names ) {
 			foreach ($names as $name) {
 				$array[] = array('label' => $name);
 			}
-		}
-		return new JSONResponse( $array );
+		}*/
+		return new JSONResponse( $names );
 	}	
+
+
+	/**
+	* @Ajax
+	*/
+	public function manageGroup() {
+		\OC_Util::checkAdminUser();
+		params = $this->request->post;
+		$group = isset($params['group']) ? $params['group'] : null;
+		$action = isset($params['action']) ? $params['action'] : null;
+		$mode = isset($params['mode']) ? $params['mode'] : null;
+		if ( is_null($group) || is_null($action) || is_null($mode)) {
+			return new JSONResponse( array("msg" => "Not specified group or action or mode"), Http::STATUS_BAD_REQUEST);
+		}
+		switch ($action) {
+			case 'rm':
+				$this->accessObjectMapper->findGroupNamesInMode(GK::modeToInt($mode));
+				break;
+			case 'add':
+				# code...
+				break;				
+			
+			default:
+				# code...
+				break;
+		}
+
+	}
 }

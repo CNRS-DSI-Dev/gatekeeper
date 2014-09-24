@@ -28,17 +28,35 @@ class GKConstants {
 	const WHITELIST_MODE_INT= 1;
 	const BLACKLIST_MODE_INT= 2;
 	const MANAGER_MODE_INT	= 9;
+	const OPENED_GATE_MODE_INT= 8;
 	const WHITELIST_MODE = 'whitelist';
 	const BLACKLIST_MODE = 'blacklist';
 	const OPENED_GATE_MODE = 'opened';
 
 
 	public static function checkMode($mode) {
-		if ($mode == GKConstants::WHITELIST_MODE 
-			|| $mode == GKConstants::BLACKLIST_MODE 
-			|| $mode == GKConstants::OPENED_GATE_MODE ) { 
+		if ($mode == self::WHITELIST_MODE 
+			|| $mode == self::BLACKLIST_MODE 
+			|| $mode == self::OPENED_GATE_MODE ) { 
 			return true;
 		}
 		return false;
+	}
+
+	public static function checkModeInt($mode) {
+		if ($mode === self::WHITELIST_MODE_INT 
+			|| $mode === self::BLACKLIST_MODE_INT 
+			|| $mode === self::OPENED_GATE_MODE_INT ) { 
+			return $mode;
+		}
+		return false;
+	}	
+
+	static function modeToInt($mode) {
+		if ( self::checkModeInt($mode)) return $mode;
+		if( $mode == self::WHITELIST_MODE) $intMode = self::WHITELIST_MODE_INT;
+		if( $mode == self::BLACKLIST_MODE) $intMode = self::BLACKLIST_MODE_INT;
+		if( $mode == self::OPENED_GATE_MODE) $intMode = self::OPENED_GATE_MODE_INT;
+		return $intMode;
 	}
 }

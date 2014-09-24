@@ -19,7 +19,19 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+use \OCA\GateKeeper\AppInfo\GKConstants as GK;
+
+
 $tmpl = new OCP\Template('gatekeeper', 'settings-admin');
- $appName='gatekeeper';
- $tmpl->assign('selected', OCP\Config::getAppValue($appName, 'mode'));
- return $tmpl->fetchPage();
+$appName='gatekeeper';
+$app = new OCA\GateKeeper\AppInfo\GateKeeperConfigApp();
+
+$tmpl->assign('selected', OCP\Config::getAppValue($appName, 'mode'));
+
+$accessObjectMapper = $app->getContainer()->query('AccessObjectMapper');
+$whitelist = $accessObjectMapper->findGroupNamesInMode(GK::WHITELIST_MODE_INT);
+$blacklist = $accessObjectMapper->findGroupNamesInMode(GK::BLACKLIST_MODE_INT);
+
+$tmpl->assign('whitelist', $whitelist);
+$tmpl->assign('blacklist', $blacklist);
+return $tmpl->fetchPage();

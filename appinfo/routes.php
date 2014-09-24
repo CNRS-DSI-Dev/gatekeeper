@@ -27,7 +27,8 @@ $app->registerRoutes($this, array(
  	'routes' => array(
  			
  			array('name' => 'settings#set_mode'	, 'url' =>	'/api/settings/mode/'	,   'verb' => 'POST'),
- 			array('name' => 'settings#search_group'	, 'url' =>	'/api/settings/group'	,   'verb' => 'GET')
+ 			array('name' => 'settings#search_group'	, 'url' =>	'/api/settings/group'	,   'verb' => 'GET'),
+ 			array('name' => 'settings#manage_group'	, 'url' =>	'/api/settings/group'	,   'verb' => 'POST')
  			
  		)
  	)

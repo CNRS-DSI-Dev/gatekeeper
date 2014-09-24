@@ -51,6 +51,7 @@ $('#gatekeeperForm') .ready(function () {
 	*********************************************************/
 	var groupUrl = OC.generateUrl('apps/gatekeeper/api/settings/group');
 
+
 	$('#searchGroupField').autocomplete({
 		minLength: 2,
 		delay: 500,
@@ -61,6 +62,40 @@ $('#gatekeeperForm') .ready(function () {
 				})
 		}
 	});
+
+
+  var loadGroupByMode = function(mode) {
+    
+    var list = $('#gkList_'+mode);
+    $.get(groupUrl, { mode: mode} ).done(function(data){
+      for (var i=0; i<data.length; i++) {
+        var grp = data[i];
+        var liName = 'gkList_'+mode+'_'+grp;
+        list.append('<li id="'+liName+'"><a href="#">'+grp+'</a></li>');
+      }
+    })
+    .fail(function(jqXHR,  textStatus, errorThrown){
+      $('#gk_settingsError').text(textStatus);
+    });
+
+  }
+
+
+  $('#gkList_whitelist :a').click(function(e){
+    var group = $(e.target).text();
+    $.post(groupUrl, {group: group, action: 'rm'})
+    .done(function(data){
+      echo('ok');
+    })
+    .fail(function(jqXHR,  textStatus, errorThrown){
+      $('#gk_settingsError').text(textStatus);
+    })
+  });
+
+
+  $('#gkLoadWhitelist').click(function(e) {
+    loadGroupByMode('whitelist');
+  });
 
 
 
