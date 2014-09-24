@@ -67,5 +67,18 @@ class AccessObjectMapper extends Mapper {
 		return $this->commonAnswer($sql, $params);
     }
 
+    public function findGroupNamesLike($value, $limit=null, $offset=null) {
+        $sql = 'SELECT name FROM `'.$this->getTableName().'` WHERE `name` LIKE ? AND `kind`=2';
+        $params = array('%'.$value.'%');
+        $result = $this->execute($sql, $params, $limit, $offset);
+
+        $names = array();
+        
+        while($row = $result->fetch()){
+            $names[] = $row['name'];
+        }
+
+        return $names;
+    }
 
 }

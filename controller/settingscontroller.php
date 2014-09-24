@@ -34,7 +34,7 @@ class SettingsController extends Controller {
 	var $appConfig;
 	var $accessObjectMapper;
 
-	public function __construct($request, $appConfig) {
+	public function __construct($request, $appConfig, $accessObjectMapper) {
 		parent::__construct('gatekeeper', $request);
 		$this->appConfig = $appConfig;
 		$this->accessObjectMapper = $accessObjectMapper;
@@ -67,11 +67,17 @@ class SettingsController extends Controller {
 		$params = $this->request->get;
 		$value = isset($params['term']) ? $params['term'] : null;
 		if ( is_null($value) )  {
-			return new JSONResponse( array('status' => 'no_criteria') );
+			return new JSONResponse( array() );
 		}
 		// Comment avoir les groupes ?
-		
-		// $this->accessObjectMapper->findGroupLike($value);
-		return new JSONResponse( array('status' => 'ok') );
+
+		$names = $this->accessObjectMapper->findGroupNamesLike($value);
+		$array = array();
+		if ( $names ) {
+			foreach ($names as $name) {
+				$array[] = array('label' => $name);
+			}
+		}
+		return new JSONResponse( $array );
 	}	
 }

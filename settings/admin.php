@@ -21,16 +21,5 @@
  */
 $tmpl = new OCP\Template('gatekeeper', 'settings-admin');
  $appName='gatekeeper';
- $array = array(
-	'version', 
-	'text',
-	'url',
-	'msg',
-	'start_page_url',
-	'start_page_message'
-);
-
-foreach ($array as $key) {
-	$tmpl->assign($key, OCP\Config::getAppValue($appName, $key));
-}
+ $tmpl->assign('selected', OCP\Config::getAppValue($appName, 'mode'));
  return $tmpl->fetchPage();

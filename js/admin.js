@@ -1,6 +1,7 @@
 "use strict";
-$('#gatekeeperFormID') .ready(function () {
+$('#gatekeeperForm') .ready(function () {
 
+	$( "#gkTabs" ).tabs();
 	
 	var echo = function (msg) {
 	        var c = $('#gk_settingsEcho');
@@ -13,9 +14,9 @@ $('#gatekeeperFormID') .ready(function () {
 	/********************************************************
 	* MODE function
 	*********************************************************/
-	$('#selectModeID').change( function(e) {
+	$('#selectMode').change( function(e) {
 
-		 $('#gk_settingsError') .empty();
+	   $('#gk_settingsError') .empty();
 
 
 		var url = OC.generateUrl('apps/gatekeeper/api/settings/mode/');
@@ -25,8 +26,8 @@ $('#gatekeeperFormID') .ready(function () {
         block.removeClass('gk_changed gk_error gk_saved');
         block.addClass('gk_changed');
 
-		var value = $('#selectModeID option:selected').val();
-		var tValue = $('#selectModeID option:selected').text();
+		var value = $('#selectMode option:selected').val();
+		var tValue = $('#selectMode option:selected').text();
 		$.post(url, {
                 value: value
             }, function (result) {
@@ -50,8 +51,17 @@ $('#gatekeeperFormID') .ready(function () {
 	*********************************************************/
 	var groupUrl = OC.generateUrl('apps/gatekeeper/api/settings/group');
 
-	$('#searchGroupFieldID').autocomplete({
-		source: groupUrl
+	$('#searchGroupField').autocomplete({
+		minLength: 2,
+		delay: 500,
+		source: function(request,response) {
+			$.get(groupUrl, {term: request.term})
+				.done( function(data, textStatus, jqXHR){
+					response(data);
+				})
+		}
 	});
+
+
 
 });

@@ -83,7 +83,8 @@ class GateKeeperConfigApp extends App {
         $container->registerService('SettingsController', function($c) {
             return new \OCA\GateKeeper\Controller\SettingsController(
             		$c->query('Request'),
-            		$c->query('ServerContainer')->getAppConfig()
+            		$c->query('ServerContainer')->getAppConfig(),
+            		$c->query('AccessObjectMapper')
             	);
         });
 	}
