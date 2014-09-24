@@ -52,23 +52,26 @@ $('#gatekeeperForm') .ready(function () {
 	var groupUrl = OC.generateUrl('apps/gatekeeper/api/settings/group');
 
 
-	$('#searchGroupField').autocomplete({
-		minLength: 2,
-		delay: 500,
-		source: function(request,response) {
-			$.get(groupUrl, {term: request.term})
-				.done( function(data, textStatus, jqXHR){
-					response(data);
-				})
-		}
-	});
+	// $('.searchGroupField').autocomplete({
+	// 	minLength: 2,
+	// 	delay: 500,
+	// 	source: function(request,response) {
+	// 		$.get(groupUrl, {term: request.term})
+	// 			.done( function(data, textStatus, jqXHR){
+	// 				response(data);
+	// 			})
+	// 	}
+	// });
 
+  var fn = function(mode, grpId, grpName, list) {
+            var id = 'gk_action_'+mode+'_'+grpId;
+        //<a class="action delete"><img src="/core/core/img/actions/delete.svg" class="svg action"></a>
+        var li = $('<li><a id="'+id+'" class="action delete"><img src="/core/core/img/actions/delete.svg" class="svg action"></a><span>'+grpName+'</span></li>');
+        li.appendTo(list);
+        li.click(liOnClick);
+  }
 
-  var loadGroupByMode = function(mode) {
-
-    $('#gkLoadButton_'+mode).addClass('loading');
-
-    var liOnClick = function(e){
+  var liOnClick = function(e){
       var anchor = $(e.target).parent();
       var li = anchor.parent();
       var anchorId = anchor.attr('id');
@@ -78,33 +81,55 @@ $('#gatekeeperForm') .ready(function () {
 
       li.removeClass('gk_changed gk_error gk_saved');
       li.addClass('gk_changed');
+      postUpdate(grpId, mode, 'rm', li);
 
-      $.post(groupUrl, {group: grpId, action: 'rm', mode: mode })
+    }
+
+  var postUpdate = function(grpId, mode, action, li) {
+
+    $.post(groupUrl, {group: grpId, action: action, mode: mode })
       .done(function(data){
-        var name = li.find('span').text();
-        echo('removed '+name+' from '+mode);
-        li.removeClass('gk_changed gk_error gk_saved');
-        li.addClass('gk_saved');
-        li.removeClass('gk_saved', 2000);
-        li.remove();
+
+        if ( action === 'rm') {
+          var name = li.find('span').text();
+          echo('removed '+name+' from '+mode);
+          li.removeClass('gk_changed gk_error gk_saved');
+          li.addClass('gk_saved');
+          li.removeClass('gk_saved', 2000);
+          li.remove();
+        }
+        return data.id;
       })
       .fail(function(jqXHR,  textStatus, errorThrown){
         li.removeClass('gk_changed gk_error gk_saved');
         li.addClass('gk_error');
         $('#gk_settingsError') .text(jqXHR.responseJSON.msg);
       })
+
+  }
+
+  var addGroupToMode = function(mode) {
+    var groupName = $('#gkGroupName_'+mode).val();
+    var list = $('#gkList_'+mode);
+    var id = postUpdate(groupName, mode, 'add');
+    if ( id ) {
+      fn(mode, id, groupName, list);
     }
     
+  }
+
+
+  var loadGroupByMode = function(mode) {
+
+    $('#gkLoadButton_'+mode).addClass('loading');
+
+
     var list = $('#gkList_'+mode);
     $.get(groupUrl, { mode: mode} ).done(function(data){
       $('#gkLoadButton_'+mode).removeClass('loading');
       for (var i=0; i<data.length; i++) {
         var grp = data[i];
-        var id = 'gk_action_'+mode+'_'+grp.id;
-        //<a class="action delete"><img src="/core/core/img/actions/delete.svg" class="svg action"></a>
-        var li = $('<li><a id="'+id+'" class="action delete"><img src="/core/core/img/actions/delete.svg" class="svg action"></a><span>'+grp.name+'</span></li>');
-        li.appendTo(list);
-        li.click(liOnClick);
+        fn(mode, grp.id, grp.name, list);
       }
     })
     .fail(function(jqXHR,  textStatus, errorThrown){
@@ -117,9 +142,18 @@ $('#gatekeeperForm') .ready(function () {
     loadGroupByMode('whitelist');
   });
 
+  $('#gkLoadButton_whitelist').click(function(e) {
+    addGroupToMode('whitelist');
+  });
+
   $('#gkLoadButton_blacklist').click(function(e) {
     loadGroupByMode('blacklist');
   });
+
+    $('#gkLoadButton_blacklist').click(function(e) {
+    addGroupToMode('blacklist');
+  });
+
 
 
 });

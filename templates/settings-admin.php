@@ -47,6 +47,10 @@ $selected[$_['selected']] = 'selected';
 				</div>
 			</fieldset>
 			<fieldset id="gkTabs-2">
+				<div class="block">
+					<input type="text" id="gkGroupName_whitelist" placeholder="search group">
+					<button type="button" id="gkAddButton_whitelist"><?php p($l->t('Add to list'));?></button>
+				</div>
 				<button type="button" id="gkLoadButton_whitelist"><?php p($l->t('load list'));?></button>
 				<ul id="gkList_whitelist">
 				</ul>

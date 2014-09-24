@@ -34,11 +34,13 @@ class SettingsController extends Controller {
 
 	var $appConfig;
 	var $accessObjectMapper;
+	var $groupManager;
 
-	public function __construct($request, $appConfig, $accessObjectMapper) {
+	public function __construct($request, $appConfig, $accessObjectMapper, $groupManager) {
 		parent::__construct('gatekeeper', $request);
 		$this->appConfig = $appConfig;
 		$this->accessObjectMapper = $accessObjectMapper;
+		$this->groupManager = $groupManager;
 	}
 
 
@@ -68,12 +70,11 @@ class SettingsController extends Controller {
 		$params = $this->request->get;
 		$mode = isset($params['mode']) ? $params['mode'] : null;
 		if ( is_null($mode) )  {
-			return new JSONResponse( array("msg" => "mode is not specified"), Http::STATUS_BAD_REQUEST);
+			return new JSONResponse( array("msg" => "criteria is not specified"), Http::STATUS_BAD_REQUEST);
 		}
-		if ( ! GK::checkMode($mode) ) {
+ 		if ( ! GK::checkMode($mode) ) {
 			return new JSONResponse( array("msg" => "mode is not valid"), Http::STATUS_BAD_REQUEST);
 		}
-		// Comment avoir les groupes ?
 
 		$groups = $this->accessObjectMapper->findGroupsInMode(GK::modeToInt($mode));
 		$array = array();
@@ -111,6 +112,7 @@ class SettingsController extends Controller {
 				# code...
 				break;
 		}
+		return new JSONResponse( array('id' => $group));
 
 	}
 }

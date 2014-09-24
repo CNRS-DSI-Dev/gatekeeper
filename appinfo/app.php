@@ -36,17 +36,13 @@ if ( !$app->isGateActivated() ) {
 
 $c = $app->getContainer();
 
-if ( $c->isAdminUser() ) {
-	return;
-}
-
-
-
 $app->getGroupManager()->addBackend( new \OC_Group_Database() );
-
 
 $hooks = $c->query('GateKeeperHooks');
 $hooks->registerForUserEvents( $app->getUserSession());
 $hooks->registerForGroupEvents( $app->getGroupManager());
 
+if ( $c->isAdminUser() ) {
+	return;
+}
 $c->query('Interceptor')->run();
