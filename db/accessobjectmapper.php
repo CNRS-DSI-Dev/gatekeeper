@@ -66,14 +66,14 @@ class AccessObjectMapper extends Mapper {
 
     public function findGroupNamesInMode($mode) {
          $sql = 'SELECT name FROM `'.$this->getTableName().'` WHERE  `mode`=?';
-         $params = array(2,$mode);
+         $params = array($mode);
         return $this->getNames($sql, $params, $limit, $offset);
     }
 
 
     public function findGroupsInMode($mode, $limit=null, $offset=null) {
          $sql = 'SELECT * FROM `'.$this->getTableName().'` WHERE  `mode`=?';
-         $params = array(2,$mode);
+         $params = array($mode);
         return $this->findEntities($sql, $params, $limit, $offset);
     }    
 
