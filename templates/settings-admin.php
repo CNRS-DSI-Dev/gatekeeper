@@ -37,11 +37,19 @@ function select($key) {
 			<div class="block">
 				<label class="label" for="mode"><?php p($l->t('Select Mode'));?></label>
 				<select id="selectMode" name="mode" title="<?php p($l->t('Select mode'));?>">
-					<option value="<?php p(GK::WHITELIST_MODE);?>" <?php p($selected[GK::WHITELIST_MODE]);?>><?php p($l->t('whitelist'));?></option>
-					<option value="<?php p(GK::BLACKLIST_MODE);?>" <?php p($selected[GK::BLACKLIST_MODE]);?>><?php p($l->t('blacklist'));?></option>
-					<option value="<?php p(GK::OPENED_GATE_MODE);?>" <?php p($selected[GK::OPENED_GATE_MODE]);?>><?php p($l->t('opened'));?></option>
+					<option value="<?php p(GK::WHITELIST_MODE);?>" <?php p($selected[GK::WHITELIST_MODE]);?>>
+						<?php p($l->t('WhiteList'));?></option>
+					<option value="<?php p(GK::BLACKLIST_MODE);?>" <?php p($selected[GK::BLACKLIST_MODE]);?>>
+						<?php p($l->t('BlackList'));?></option>
+					<option value="<?php p(GK::OPENED_GATE_MODE);?>" <?php p($selected[GK::OPENED_GATE_MODE]);?>>
+						<?php p($l->t('Opengate'));?></option>
 				</select>
 			</div>
+			<ul class="gk_ul_explanations">
+					<li><?php p($l->t('WhiteList mode: only members of groups inlisted in whitelist would access to service'));?></li>
+					<li><?php p($l->t('Blacklist mode: only members of groups inlisted in blacklist would NOT access to service'));?></li>
+					<li><?php p($l->t("Opengate mode: GateKeeper doesn't care"));?></li>
+			</ul>
 		</fieldset>
 		<!-- TABULATIONS -->
 		<div id="gkTabs">
@@ -53,19 +61,19 @@ function select($key) {
 
 			<fieldset id="gkTabs-1">
 				<div class="block">
-					<input type="text" id="gkGroupName_whitelist" placeholder="search group">
+					<input type="text" id="gkGroupName_whitelist" placeholder="<?php p($l->t('Enter Group Name'));?>">
 					<button type="button" id="gkAddButton_whitelist"><?php p($l->t('Add to list'));?></button>
 				</div>
-				<button type="button" id="gkLoadButton_whitelist"><?php p($l->t('Load list'));?></button>
+				<button type="button" id="gkLoadButton_whitelist"><?php p($l->t('Display List'));?></button>
 				<ul class="gk_ul_double" id="gkList_whitelist">
 				</ul>
 			</fieldset>
 			<fieldset id="gkTabs-2">
 				<div class="block">
-					<input type="text" id="gkGroupName_blacklist" placeholder="search group">
+					<input type="text" id="gkGroupName_blacklist" placeholder="<?php p($l->t('Enter Group Name'));?>">
 					<button type="button" id="gkAddButton_blacklist"><?php p($l->t('Add to list'));?></button>
 				</div>
-				<button type="button" id="gkLoadButton_blacklist"><?php p($l->t('Load list'));?></button>
+				<button type="button" id="gkLoadButton_blacklist"><?php p($l->t('Display List'));?></button>
 				<ul class="gk_ul_double" id="gkList_blacklist">
 				</ul>
 			</fieldset>
