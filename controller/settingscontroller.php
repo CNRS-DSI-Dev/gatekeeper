@@ -93,26 +93,41 @@ class SettingsController extends Controller {
 	public function manageGroup() {
 		\OC_Util::checkAdminUser();
 		$params = $this->request->post;
-		$group = isset($params['group']) ? $params['group'] : null;
+		$id = isset($params['group']) ? $params['group'] : null;
+		$name = isset($params['name']) ? $params['name'] : null;
 		$action = isset($params['action']) ? $params['action'] : null;
 		$mode = isset($params['mode']) ? $params['mode'] : null;
-		if ( is_null($group) || is_null($action) || is_null($mode)) {
-			return new JSONResponse( array("msg" => "Not specified group or action or mode"), Http::STATUS_BAD_REQUEST);
+
+		if ( is_null($action) || is_null($mode)) {
+			return new JSONResponse( array("msg" => "Not specified action or mode"), Http::STATUS_BAD_REQUEST);
+		}
+
+		$intMode = GK::modeToInt($mode);
+		if ( ! $intMode ) {
+			return new JSONResponse( array("msg" => "mode ${mode} is not valid"), Http::STATUS_BAD_REQUEST);
 		}
 		switch ($action) {
 			case 'rm':
-				$ao = AccessObject::fromParams(array('id' => $group));
+				if ( is_null($id)) {
+					return new JSONResponse( array("msg" => "Not specified id"), Http::STATUS_BAD_REQUEST);
+				}
+				$ao = AccessObject::fromParams(array('id' => $id));
 				$this->accessObjectMapper->delete($ao);
 				break;
 			case 'add':
-				# code...
+				if ( is_null($name)) {
+					return new JSONResponse( array("msg" => "Not specified name"), Http::STATUS_BAD_REQUEST);
+				}
+				$ao = AccessObject::fromParams(array('name' => $name, 'kind' => GK::GROUP_KIND, 'mode' => $intMode));
+				$this->accessObjectMapper->insert($ao);
+				$id = $ao->getId();
 				break;				
 			
 			default:
 				# code...
 				break;
 		}
-		return new JSONResponse( array('id' => $group));
+		return new JSONResponse( array('id' => $id));
 
 	}
 }

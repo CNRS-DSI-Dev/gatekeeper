@@ -28,7 +28,7 @@ $selected[$_['selected']] = 'selected';
 ?>
 <div class="section">
 	<h2><?php p($l->t('GateKeeper'));?></h2>
-	<pre id="gk_settingsError" class="gk_error"></pre>
+	<pre id="gk_display_error" class="gk_error"></pre>
 	<form id="gatekeeperForm">
 		<div id="gkTabs">
 			<ul>
@@ -56,11 +56,15 @@ $selected[$_['selected']] = 'selected';
 				</ul>
 			</fieldset>
 			<fieldset id="gkTabs-3">
+				<div class="block">
+					<input type="text" id="gkGroupName_blacklist" placeholder="search group">
+					<button type="button" id="gkAddButton_blacklist"><?php p($l->t('Add to list'));?></button>
+				</div>
 				<button type="button" id="gkLoadButton_blacklist"><?php p($l->t('load list'));?></button>
 				<ul id="gkList_blacklist">
 				</ul>
 			</fieldset>
 		</div>
 	</form>
-	<div id="gk_settingsEcho"></div>
+	<div id="gk_display_info"></div>
 </div>
