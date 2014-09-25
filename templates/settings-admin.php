@@ -25,7 +25,9 @@ use \OCA\GateKeeper\AppInfo\GKConstants as GK;
 \OCP\Util::addStyle('gatekeeper', 'gk');
 $selected = array(GK::WHITELIST_MODE => '', GK::BLACKLIST_MODE => '', GK::OPENED_GATE_MODE => '');
 $selected[$_['selected']] = 'selected';
-function select($key) { return $selected[$key]; }
+function select($key) { 
+	p($selected[$key]); 
+}
 ?>
 <div class="section">
 	<h2><?php p($l->t('GateKeeper'));?></h2>
@@ -35,9 +37,9 @@ function select($key) { return $selected[$key]; }
 			<div class="block">
 				<label class="label" for="mode"><?php p($l->t('Select Mode'));?></label>
 				<select id="selectMode" name="mode" title="<?php p($l->t('Select mode'));?>">
-					<option value="<?php p(GK::WHITELIST_MODE);?>" <?php select(GK::WHITELIST_MODE);?>><?php p($l->t('whitelist'));?></option>
-					<option value="<?php p(GK::BLACKLIST_MODE);?>" <?php select(GK::BLACKLIST_MODE);?>><?php p($l->t('blacklist'));?></option>
-					<option value="<?php p(GK::OPENED_GATE_MODE);?>" <?php select(GK::OPENED_GATE_MODE);?>><?php p($l->t('opened'));?></option>
+					<option value="<?php p(GK::WHITELIST_MODE);?>" <?php p($selected[GK::WHITELIST_MODE]);?>><?php p($l->t('whitelist'));?></option>
+					<option value="<?php p(GK::BLACKLIST_MODE);?>" <?php p($selected[GK::BLACKLIST_MODE]);?>><?php p($l->t('blacklist'));?></option>
+					<option value="<?php p(GK::OPENED_GATE_MODE);?>" <?php p($selected[GK::OPENED_GATE_MODE]);?>><?php p($l->t('opened'));?></option>
 				</select>
 			</div>
 		</fieldset>

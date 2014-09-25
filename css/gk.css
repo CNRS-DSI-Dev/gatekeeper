@@ -39,8 +39,6 @@
 
 .gk_ul_double li {
     width: 50%;
-}
-li {
     border-bottom: 1px solid #ccc;
     display: inline;
     float: left;

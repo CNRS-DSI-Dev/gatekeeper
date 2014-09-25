@@ -31,13 +31,18 @@ class GateKeeperService {
 	var $groupManager;
 	
 	public function __construct($mode, $session, $accessObjectMapper, $groupManager) {
+		$intMode = 0;
 		if ( is_string($mode) ) {
 			$intMode = GK::modeToInt($mode);
-			if ( ! $intMode  ) {
-				throw new \Exception("Mode $mode is not valid", 1);	
-			}
-			$this->mode = $mode;
+		} else if ( ! GK::checkModeInt($mode) ){
+			throw new \Exception("Mode after check $mode is not valid", 1);	
+		} else {
+			$intMode = $mode;
+		}
+		if ( ! $intMode  ) {
+			throw new \Exception("Mode $mode is not valid", 1);	
 		}	
+		$this->mode = $intMode;
 		$this->session = $session;
 		$this->accessObjectMapper = $accessObjectMapper;
 		$this->groupManager = $groupManager;
