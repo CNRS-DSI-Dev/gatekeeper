@@ -81,13 +81,6 @@ class GateKeeperService {
 		$blackList = ! $whiteList;
 		$uid = $user->getUID() ;
 
-		if ( $whiteList && $this->isUidAllowed( $uid) ) {
-			return $respons;
-		}
-		if ( $blackList && ! $this->isUidAllowed( $uid ) ) {
-			return $respons->deny('uid.blacklisted', $uid);
-		}
-
 		if ( ! is_null($groupIds) && ! empty($groupIds) ) {
 			foreach ($groupIds as $g) {
 				if ( $whiteList && $this->isGroupAllowed($g) ) {
@@ -113,12 +106,6 @@ class GateKeeperService {
 		$inMode = $this->accessObjectMapper->isGroupInMode($groupName, $this->mode);
 		return $this->answer($inMode);
 	}
-
-	public function isUidAllowed($uid) {
-		$inMode = $this->accessObjectMapper->isUidInMode($uid, $this->mode);
-		return $this->answer($inMode);
-	}
-
 
 	public function answer($inMode) {
 		if ( $this->isModeAllow() ) {

@@ -29,7 +29,7 @@ class AccessObject extends \OCP\AppFramework\Db\Entity {
 	* '1' -> uid
 	* '2' -> group
 	*/
-	protected $kind;
+	// protected $kind;
 	/**
 	* Mode is 1 char value
 	* '9' -> manager

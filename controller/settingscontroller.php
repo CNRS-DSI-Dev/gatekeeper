@@ -118,7 +118,7 @@ class SettingsController extends Controller {
 				if ( is_null($name)) {
 					return new JSONResponse( array("msg" => "Not specified name"), Http::STATUS_BAD_REQUEST);
 				}
-				$ao = AccessObject::fromParams(array('name' => $name, 'kind' => GK::GROUP_KIND, 'mode' => $intMode));
+				$ao = AccessObject::fromParams(array('name' => $name, 'mode' => $intMode));
 				$this->accessObjectMapper->insert($ao);
 				$id = $ao->getId();
 				break;				

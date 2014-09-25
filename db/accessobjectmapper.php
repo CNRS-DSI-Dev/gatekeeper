@@ -35,7 +35,8 @@ class AccessObjectMapper extends Mapper {
     }
 
     public function getCommonSQL() {
-    	return 'SELECT * FROM `'.$this->getTableName().'` WHERE `name`=? AND `kind`=? AND `mode`=?';
+    	return 'SELECT * FROM `'.$this->getTableName().'` WHERE `name`=? AND `mode`=?';
+
     }
 
     public function modeToInt($mode) {
@@ -44,7 +45,7 @@ class AccessObjectMapper extends Mapper {
 
     public function isGroupInMode($groupName, $mode) {
     	$sql = $this->getCommonSQL();
-		$params = array($groupName, GK::GROUP_KIND, $mode);
+		$params = array($groupName, $mode);
 		return $this->commonAnswer($sql, $params);
     }
 
@@ -55,34 +56,29 @@ class AccessObjectMapper extends Mapper {
 		return true;
     }
 
-    public function isUidInMode($uid, $mode) {
-    	$sql = $this->getCommonSQL();
-		$params = array($uid, GK::UID_KIND, $mode);
-		return $this->commonAnswer($sql, $params);
-    }
 
     public function isManagerGroup($g) {
     	$sql = $this->getCommonSQL();
-		$params = array($groupName, GK::GROUP_KIND, GK::MANAGER_MODE_INT);
+		$params = array($groupName, GK::MANAGER_MODE_INT);
 		return $this->commonAnswer($sql, $params);
     }
 
 
     public function findGroupNamesInMode($mode) {
-         $sql = 'SELECT name FROM `'.$this->getTableName().'` WHERE `kind`=? AND `mode`=?';
+         $sql = 'SELECT name FROM `'.$this->getTableName().'` WHERE  `mode`=?';
          $params = array(2,$mode);
         return $this->getNames($sql, $params, $limit, $offset);
     }
 
 
     public function findGroupsInMode($mode, $limit=null, $offset=null) {
-         $sql = 'SELECT * FROM `'.$this->getTableName().'` WHERE `kind`=? AND `mode`=?';
+         $sql = 'SELECT * FROM `'.$this->getTableName().'` WHERE  `mode`=?';
          $params = array(2,$mode);
         return $this->findEntities($sql, $params, $limit, $offset);
     }    
 
     public function findGroupNamesLike($value, $limit=null, $offset=null) {
-        $sql = 'SELECT name FROM `'.$this->getTableName().'` WHERE `name` LIKE ? AND `kind`=2';
+        $sql = 'SELECT name FROM `'.$this->getTableName().'` WHERE `name` LIKE ?';
         $params = array('%'.$value.'%');
         return $this->getNames($sql, $params, $limit, $offset);
     }

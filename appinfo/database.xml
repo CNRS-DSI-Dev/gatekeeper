@@ -24,12 +24,6 @@
 				<length>64</length>
 			</field>
 			<field>
-				<name>kind</name>
-				<type>integer</type>
-				<notnull>true</notnull>
-				<length>1</length>
-			</field>
-			<field>
 				<name>mode</name>
 				<type>integer</type>
 				<notnull>true</notnull>
