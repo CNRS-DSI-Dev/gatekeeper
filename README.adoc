@@ -1,3 +1,5 @@
 == GateKeeper
 
 Close or Open your service according groups
+
+include::doc/doc.adoc[]
