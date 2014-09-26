@@ -36,7 +36,7 @@ class GateKeeperConfigApp extends App {
 		// Hooks
 		$container->registerService('GateKeeperHooks', function ($c) {
 			return new \OCA\GateKeeper\Hooks\GateKeeperHooks(
-				//$c->query('GateKeeperService'),
+				$c->query('GateKeeperService'),
 				$c->query('ServerContainer')->getSession(),
 				$c->query('Logger')
 				);
