@@ -24,6 +24,10 @@ namespace OCA\GateKeeper\Service;
 use \OCA\GateKeeper\AppInfo\GKConstants as GK;
 use OCA\GateKeeper\Lib\GKHelper;
 
+/**
+* Main service for GateKeeper
+*
+*/
 class GateKeeperService {
 
 	var $mode;
@@ -59,7 +63,7 @@ class GateKeeperService {
 		$refresh = true;
 		if ( $this->remote ) {
 			$now = time();
-			\OCP\Util::writeLog('gatekeeper::hasToRefresh', 'now='.$now, \OCP\Util::DEBUG);
+			
 			$timestamp = $this->session->get('gk_remote_ts');
 			// creation
 			if ( is_null($timestamp)) {
@@ -67,7 +71,6 @@ class GateKeeperService {
 			} else if ( $now - $timestamp < $this->delay ) {
 				$refresh = false;
 			} else {
-				\OCP\Util::writeLog('gatekeeper::hasToRefresh', 'TRUE '.($now - $timestamp).', ts='.$timestamp, \OCP\Util::DEBUG);
 				$this->session->set('gk_remote_ts', $now);
 			}
 		}
@@ -92,14 +95,14 @@ class GateKeeperService {
 	 */
 	public function checkUserAllowances($user) {
 		$status = $this->session->get('gk_status');
-		\OCP\Util::writeLog('gatekeeper::checkUserAllowances','ANTE status='.$status, \OCP\Util::DEBUG);
+		
 		if ( ! $this->hasToRefresh() ) {
 			if ( ! is_null($status) && $status == 'ok' ) return GateKeeperRespons::yetGranted();
 			if ( ! is_null($status) && $status == 'ko' ) return GateKeeperRespons::yetDenied();
 		}
 		$respons = $this->isUserAllowed($user);
 		$status = ( $respons->isAllow() ) ? 'ok': 'ko';
-		\OCP\Util::writeLog('gatekeeper::checkUserAllowances','POST status='.$status, \OCP\Util::DEBUG);
+		
 		$this->session->set('gk_status', $status);
 		return $respons;
 		

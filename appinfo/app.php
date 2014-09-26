@@ -21,10 +21,12 @@
  */
 namespace OCA\GateKeeper\AppInfo;
 
+// Don't waste resources for nothing
 if ( !  \OC_App::isEnabled( 'gatekeeper') ) {
 	return;
 }
-\OCP\Util::writeLog('gatekeeper','appInfo.app',\OCP\Util::ERROR);
+
+
 \OCP\App::registerAdmin('gatekeeper','settings/admin');
 
 
@@ -36,11 +38,8 @@ if ( !$app->isGateActivated() ) {
 
 $c = $app->getContainer();
 
-//$app->getGroupManager()->addBackend( new \OC_Group_Database() );
-
 $hooks = $c->query('GateKeeperHooks');
 $hooks->registerForUserEvents( $app->getUserSession());
-$hooks->registerForGroupEvents( $app->getGroupManager());
 
 if ( $c->isAdminUser() ) {
 	return;

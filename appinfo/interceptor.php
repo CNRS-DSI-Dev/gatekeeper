@@ -31,8 +31,9 @@ class Interceptor {
 
 	/**
 	* @param \OCP\IUser
-	* @param GateKeeperService service
-	* @param bool throwExceptionToExit Throw Exception instead of exit (usefull for unit test)
+	* @param bool $isLogged trur if user is logged in
+	* @param GateKeeperService $service
+	* @param bool $throwExceptionToExit Throw Exception instead of exit (usefull for unit test)
 	*
 	*/
 	public function __construct($userSession, $isLoggedIn, $service, $throwExceptionToExit = false) {
@@ -42,48 +43,58 @@ class Interceptor {
 		
 	}
 
+	/**
+	* Methode to call to run interceptor()
+	*/
 	function run() {
 		$user = $this->userSession->getUser();
-		$remote = GKHelper::isRemote();
-		\OCP\Util::writeLog('gatekeeper', 'interceptor '.(($remote) ? ' in remote mode': '').(is_null($user) ? ' NO USER' : ' USER EXISTS'.$user->getUID()), \OCP\Util::INFO);
+		
+		
 		if ( is_null($user) ) {
 			return;
 		}
+
 		if ( $this->isLoggedIn || $remote ) {
 			$respons = $this->service->checkUserAllowances($user);
-			\OCP\Util::writeLog('gatekeeper', 'response is '.$respons.(($remote) ? ' in remote mode': ''), \OCP\Util::INFO);
+			
 			if ( $respons->isDenied() ){
 				$uid = $user->getUID();
-				
 
-				\OCP\Util::writeLog('gatekeeper', $uid.' is denied'.(($remote) ? ' in remote mode': ''), \OCP\Util::INFO);
+				//=============================
 				$this->userSession->logout();
+				//=============================
+
+				$remote = GKHelper::isRemote();
 				if ( $remote ) {
 					$this->denyOnRemote($uid, $respons);
-				}
-
-
-				if ( ! $respons->isEmitted() ) {
-					// $tmpl = new \OC_Template('gatekeeper','deny',array('msg'	=> 'denied'));
-					// $tmpl->printPage();
-
-					\OC_Template::printErrorPage($this->getNiceMessage($respons));
-					// \OC_Template::printGuestPage('gatekeeper','deny',
-					// 	array('msg'	=> 'denied'));
-					$this->doesExit();
+				} else if ( ! $respons->isEmitted() ) {
+					$this->denyOnWeb($respons);
 				}
 			}
 		}
 	}
 
+	/**
+	* Ends dialog when session is in full web
+	*/
+	function denyOnWeb($respons) {
+		\OC_Template::printErrorPage($this->getNiceMessage($respons));
+		$this->doesExit();
+	}
 
 
-
+	/**
+	* Ends dialog when session is in remote mode
+	*/
 	function denyOnRemote($uid, $respons) {
 		throw new \Exception("Access is denied. ".$this->getNiceMessage($respons));
 	}
 
 
+	/**
+	* @param GateKeeperRespons respons
+	* @return String a nice message for end user
+	*/
 	function getNiceMessage($respons) {
 		// TODO introduce i10n
 		$fmt = array(
@@ -101,6 +112,9 @@ class Interceptor {
 		}
 	}
 
+	/**
+	* Replace exit() by a more unit-test friendly excpetion
+	*/
 	function doesExit(){
 		if ($this->throwExceptionToExit ) {
 			throw new \Exception('exit');

@@ -37,7 +37,6 @@ class GateKeeperConfigApp extends App {
 		$container->registerService('GateKeeperHooks', function ($c) {
 			return new \OCA\GateKeeper\Hooks\GateKeeperHooks(
 				$c->query('GateKeeperService'),
-				$c->query('ServerContainer')->getSession(),
 				$c->query('Logger')
 				);
 		});
@@ -52,7 +51,7 @@ class GateKeeperConfigApp extends App {
 				);
 		});
 
-		// Service
+		// Mapper
 		$container->registerService('AccessObjectMapper', function ($c) {
 			return new \OCA\GateKeeper\Db\AccessObjectMapper(
 				$c->query('ServerContainer')->getDb()
@@ -62,10 +61,6 @@ class GateKeeperConfigApp extends App {
 		// groupManager
 		$container->registerService('GroupManager', function($c) {
 			return \OC_Group::getManager();
-			// return new \OC\Group\Manager(
-			// 		//$c->query('ServerContainer')->getUserManager()
-
-			// 	);
 		});
 
 		// - logger - 

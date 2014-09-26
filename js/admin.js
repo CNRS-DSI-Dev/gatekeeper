@@ -44,7 +44,6 @@ $('#gatekeeperForm') .ready(function () {
       $('#gk_display_error') .text(jqXHR.responseJSON.msg);
     });
 
-    block.removeClass('gk_changed',3000);         
   });
 
 	/********************************************************

@@ -1,70 +1,154 @@
 = GateKeeper
 
-== Architecture
-
-Intercepter les logins et les affectations 
-
-Hooks disponibles
-
-* postLogin(\OC\User\User $user)
-* postAddUser(\OC\Group\Group $group, \OC\User\User $user)
-* postRemoveUser(\OC\Group\Group $group, \OC\User\User $user)
+GateKeeper est une application owncloud dont l'objet est d'autoriser ou interdire d'accès des utilisateurs en fonction de leurs groupes.
 
 == Logique
 
-* En mode liste blanche, il suffit d'une authorisation pour être ok
-* En mode liste noire, il suffit d'une interdiction pour être ko
+GateKeeper fonctionne sur le principe des `listes blanches` et des `listes noires`.
 
-Séquence
+* Une liste blanche est constituée des groupes dont les utilisateurs  sont les **seuls** à pouvoir utiliser les services de Owncloud.
+* Une liste noire est constituée des groupes dont les utilisateurs sont les **seuls** à **ne pas* pouvoir utiliser les services de Owncloud.
 
-Positionnement d'un intercepteur qui vérifiera l'état d'un flag de session GK_STATUS
+GateKeeper fonctionne selon trois <<mode>>s
 
-.Etat du flag GK_STATUS
-[options="header"]
-|====
-| Valeur 	| Action 	| Commentaires
-| NULL		| Aucune	| En attente 
-| OK 		| Aucune	| Les tests sont pour l'instant valide
-| KO 		| logout()  | Les tests ne sont pas valides
-|====
+* En mode liste blanche, il suffit d'une authorisation pour être autorisée
+* En mode liste noire, il suffit d'une interdiction pour être interdit 
+* En mode _porte ouverte_, aucune vérification n'est effectuée.
 
 
 
+== Architecture
+
+GateKeeper repose sur
+
+* Un service `OCA\GateKeeper\Service\GateKeeperService` en charge de la logique générale
+* Un intercepteur `OCA\GateKeeper\AppInfo\Interceptor` qui intercepte toute requête et et demande au _service_ d'évaluer la situation
+* de _hooks_ `OCA\GateKeeper\Hook\gateKeeperHooks` qui prend en charge le balisage, à travers des flags, de l'évaluation de la situation
+
+=== GateKeeperService 
+
+Les principales méthodes de ce service sont
+. `GateKeeperService::checkUserAllowances(OC\User\User $user)`
+. `GateKeeperService::isUserAllowed(OC\User\User $user)`
+
+==== checkUserAllowances
+La logique de `checkUserAllowances` est la suivante
+
+. vérifier dans la session si il y a lieu de procéder à une évaluation avec `isUserAllowed`
+. si oui 
+	** évaluer la situation
+	** stocker en session le résultat
+. si non
+	** returner le résultat de la précédente évaluation
+
+Le flag de session est positionné par les méthodes 
+
+* startCycle($uid)
+* endCycle()
+
+==== isUserAllowed
+La méthode `isUserAllowed` procède de la façon suivante
+
+. Elle parcourt la liste des groupes d'un utilisateur
+. si il existe un groupe marqué _liste blanche_ et que GateKeeper est en mode liste blanche, alors l'accès est accordé
+. si il existe un groupe marqué _liste noire_ et que GateKeeper est en mode liste noire, alors l'accès est refusé
+. si finalement aucun groupe n'est marqué, et que gateKeeper est en mode liste noire, alors l'accès est refusé
+. sinon il est accordé
+
+Dans le cas des accès des clients de synchronisation, les ré-évaluations sont espacées en utilisant un _timer_  ( cf. <<hasToRefresh>>)
+
+==== hasToRefresh
+
+La méthode `hasToRefresh` évalue si il y a lieu de procéder à une évaluation de la situation en appelant `isUserAllowed`
+
+. Elle positionne un _timer_
+. en deça d'un certain délai (variable _delay_) elle estime que la précédente évaluation est encore valable
+. au dessus, elle réinitialise le _timer_ et estime qu'une nouvelle évaluation est nécessaire.
+
+== Administration
+
+L'administration des autorisations se fait en **trois** étapes
+
+. Décider du <<mode>>
+. Mettre des groupes dans une liste blanche ou noire suivant le <<mode>>
+. Mettre des personnes dans les groupes 
+
+
+=== Décider du mode
+
+Dans l'écran d'administration, choisir un mode
+
+* En mode liste blanche, il suffit d'une authorisation pour être autorisée
+* En mode liste noire, il suffit d'une interdiction pour être interdit 
+* En mode _porte ouverte_, aucune vérification n'est effectuée.
+
+=== Gestion des liste
+
+Dans l'écran d'administration, cliquer sur l'onglet du mode sélectionné
+
+==== Ajouter un groupe
+
+Entrer le nom d'un groupe (il n'y a pas de vérification de l'existence du groupe) et _ajouter_
+
+==== Afficher la liste des groupes
+
+Cliquer sur _afficher la liste_
+
+==== Retirer un groupe
+
+Cliquer sur l'icone _poubelle_
+
+=== Gestion des personnes
+
+Nous recommandons par conventions de créer deux groupes d'utilisateurs
+
+. forbidden qui sera le groupe des utilisateurs interdits d'accès
+. allowed qui sera le groupe des utilisateurs autorisés
+
+
+==== Ajouter une personne dans un groupe
+
+. Aller dans l'écran d'administration des utilisateurs
+. Associer l'utilisateur à un des groupes d'une liste GateKeeper
+
+== Exemples
+
+=== Cas d'usage
+Vous voulez limiter les accès à certains utilisateurs. 
+
+. Passer en mode _liste blanche_
+. Ajouter le groupe _allowed_ à la liste blanche
+. Ajouter dans l'écran de gestion des utilisateurs tous les utilisateurs autorisé à _allowed_
+
+
+Vous voulez interdire les accès à certains utilisateurs. 
+
+. Passer en mode _liste noire_
+. Ajouter le groupe _forbidden_ à la liste blanche
+. Ajouter dans l'écran de gestion des utilisateurs tous les utilisateurs autorisé à _forbidden_
+
+
+Vous voulez gérer les accès de classes d'utilisateurs.
+
+Dans certains cas, il est plus facile de gérer des classes d'utilisateurs que des utilisateurs individuelles.
+
+. Faite en sorte que cette classe soit associée à un groupe ( utilisation d'applications de provisionning.footnote:[Comme user_servervars2.] )
+. Associer le groupe à une liste (blanche ou noire)
+. Passer dans le mode recherché
+
+
+=== Bloquer/Débloquer un utilisateur
+
+Un utilisateur doit être bloqué (vol de portable, défaillance, usurpation, ...)
+
+* En mode liste blanche, retirez le de tous les groupes autorisés
+* En mode liste noire, ajoutez le dans le groupe _forbidden_
+
+cela aura pour effet que
+
+* En mode web, l'accès sera interdit à la prochaine ouverture de session
+* En mode remote,  l'accès sera interdit au plus à l'écheance du _timer_ (actuellement 20 secondes)
 
 
 
 
-
-
-
-== Scénarios
-
-=== Mode Liste blanche
-Conditions:  pas d'ajout ou retrait de groupe
-
-. L'utilisateur se connecte
-. Après authentification, 
-	.. Si l'UID de l'utilisateur est dans la liste blanche alors il est autorisée. FIN
-	.. Sinon le service parcourt la liste des groupes de l'utilisateur
-	... Si il trouve un groupe autorisée, alors l'utilisateur est autorisé. FIN
-	.. Si aucun groupe ne remplit les conditions, l'utilisateur n'est pas autorisé
-. Si il trouve un groupe
-
-
-Comment signifier l'autorisation du à GateKeeper ?
-
-En le mentionnant dans les préférences utilisateurs.
-
-
-.Clefs
-[width="50%",options="header"]
-|=====
-|key|value|meaning
-|uid|wl|Autorisé
-|=====
-
-
-[source,PHP]
-----
-$app->getServer()->getConfig()->setUserValue($userId, $appName, $key, $value);
-----

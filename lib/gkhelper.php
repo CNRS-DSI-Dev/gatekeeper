@@ -24,6 +24,9 @@ namespace OCA\GateKeeper\Lib;
 
 class GKHelper {
 	
+	/**
+	* @return bool true if request is about '/core/remote.php'
+	*/
 	public static function isRemote() {
 		$path = self::path($_SERVER['REQUEST_URI']);
 		if ( strpos($path, '/core/remote.php') === 0 ) {

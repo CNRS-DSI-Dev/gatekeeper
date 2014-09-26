@@ -26,11 +26,9 @@ class GateKeeperHooks {
 
 	var $gateKeeperService;
 	var $logger;
-	var $session;
 
-	public function __construct($gateKeeperService, $session, $logger) {
+	public function __construct($gateKeeperService, $logger) {
 		$this->gateKeeperService = $gateKeeperService;
-		$this->session = $session;
 		$this->logger = $logger;
 	}
 
@@ -39,15 +37,10 @@ class GateKeeperHooks {
 	* remove gk_status from sessions's scope if it's not remote
 	*/
 	function onPreLogin ( $uid) {
-		$remote = GKHelper::isRemote();
-		//$this->session->remove('gk_status');
 		$this->gateKeeperService->startCycle($uid);
-		\OCP\Util::writeLog('gatekeeperHOOKS::onPreLogin', $uid.' will log in'.(($remote) ? ' in remote mode': ''), \OCP\Util::INFO);
 	}
 
 	function onLogout(){
-		$remote = GKHelper::isRemote();
-		//$this->session->remove('gk_status');
 		$this->gateKeeperService->endCycle();
 	}
 
@@ -55,20 +48,6 @@ class GateKeeperHooks {
 		//$this->logger->info('onPostLogin '.$user);		
 	}
 
-
-	function onPostAddUser (\OC\Group\Group $group, \OC\User\User $user) {
-		$remote = GKHelper::isRemote();
-		$this->logger->info('onPostAddUser '.$user->getUID());
-		\OCP\Util::writeLog('onPostAddUser', $user->getUID().' will log in'.(($remote) ? ' in remote mode': ''), \OCP\Util::INFO);
-		//$this->session->remove('gk_status');
-	}
-
-	function onPostRemoveUser (\OC\Group\Group $group, \OC\User\User $user) {
-		$remote = GKHelper::isRemote();
-		$this->logger->info('onPostRemoveUser '.$user->getUID());
-		\OCP\Util::writeLog('onPostRemoveUser', $user->getUID().' will log in'.(($remote) ? ' in remote mode': ''), \OCP\Util::INFO);
-		//$this->session->remove('gk_status');
-	}
 	
 	function registerForUserEvents($userSession) {
 		$obj = $this;
@@ -89,13 +68,4 @@ class GateKeeperHooks {
 		});		
 	}
 
-	function registerForGroupEvents($groupManager) {
-		$obj = $this;
-		$groupManager->listen('\OC\Group', 'postAddUser', function ($group, $user) use (&$obj) {
-			return $obj->onPostAddUser($group, $user);
-		});
-		$groupManager->listen('\OC\Group', 'postRemoveUser', function ($group, $user) use (&$obj) {
-			return $obj->onPostRemoveUser($group, $user);
-		});
-	}
 }
