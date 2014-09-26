@@ -21,6 +21,7 @@
  */
 namespace OCA\GateKeeper\AppInfo;
 use OCP\ISession;
+use OCA\GateKeeper\Lib\GKHelper;
 
 class Interceptor {
 
@@ -34,7 +35,7 @@ class Interceptor {
 	* @param bool throwExceptionToExit Throw Exception instead of exit (usefull for unit test)
 	*
 	*/
-	public function __construct($userSession, $isLoggedIn, GateKeeperService $service, $throwExceptionToExit = false) {
+	public function __construct($userSession, $isLoggedIn, $service, $throwExceptionToExit = false) {
 		$this->service = $service;
 		$this->isLoggedIn = $isLoggedIn;
 		$this->userSession = $userSession;
@@ -43,13 +44,25 @@ class Interceptor {
 
 	function run() {
 		$user = $this->userSession->getUser();
+		$remote = GKHelper::isRemote();
+		\OCP\Util::writeLog('gatekeeper', 'interceptor '.(($remote) ? ' in remote mode': '').(is_null($user) ? ' NO USER' : ' USER EXISTS'.$user->getUID()), \OCP\Util::INFO);
 		if ( is_null($user) ) {
 			return;
 		}
-		if ( $this->isLoggedIn ) {
+		if ( $this->isLoggedIn || $remote ) {
 			$respons = $this->service->checkUserAllowances($user);
+			\OCP\Util::writeLog('gatekeeper', 'response is '.$respons.(($remote) ? ' in remote mode': ''), \OCP\Util::INFO);
 			if ( $respons->isDenied() ){
+				$uid = $user->getUID();
+				
+
+				\OCP\Util::writeLog('gatekeeper', $uid.' is denied'.(($remote) ? ' in remote mode': ''), \OCP\Util::INFO);
 				$this->userSession->logout();
+				if ( $remote ) {
+					$this->denyOnRemote($uid, $respons);
+				}
+
+
 				if ( ! $respons->isEmitted() ) {
 					// $tmpl = new \OC_Template('gatekeeper','deny',array('msg'	=> 'denied'));
 					// $tmpl->printPage();
@@ -64,11 +77,18 @@ class Interceptor {
 	}
 
 
+
+
+	function denyOnRemote($uid, $respons) {
+		throw new \Exception("Access is denied. ".$this->getNiceMessage($respons));
+	}
+
+
 	function getNiceMessage($respons) {
 		// TODO introduce i10n
 		$fmt = array(
-			'uid.blacklisted' 	=> "You do not have access to this service. Please contact your administrator with this information: uid=%s.",
-			'group.blacklisted' => "You do not have access to this service. Please contact your administrator with this information: uid=%s,group=%s.",
+			'uid.blacklisted' 	=> "You do not have access to this service. Please contact your administrator with theses informations: uid=%s.",
+			'group.blacklisted' => "You do not have access to this service. Please contact your administrator with theses informations: uid=%s,group=%s.",
 			'not.whitelisted' 	=> "Access to this service is restricted. Please contact your administrator with this information: uid=%s.",
 			);
 		$key = $respons->getCause();

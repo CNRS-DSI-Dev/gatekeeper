@@ -70,6 +70,7 @@ class GateKeeperRespons {
 	public static function yetGranted() {
 		$r = new GateKeeperRespons();
 		$r->emitted = true;
+		$r->cause = 'yet granted';
 		return $r;
 	}
 
@@ -77,7 +78,12 @@ class GateKeeperRespons {
 		$r = new GateKeeperRespons();
 		$r->emitted = true;
 		$r->denied = true;
+		$r->cause = 'yet denied';
 		return $r;
+	}
+
+	public function __toString() {
+		return "denied={$this->denied},uid={$this->uid},group={$this->group},cause={$this->cause}";
 	}
 
 }

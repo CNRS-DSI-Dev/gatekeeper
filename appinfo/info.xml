@@ -8,6 +8,7 @@
     <author>Marc DeXeT</author>
     <require>7.0</require>
     <types>
-    	<type>prelogin</type>
+    	<prelogin/>
+        <authentication/>
     </types>
 </info>

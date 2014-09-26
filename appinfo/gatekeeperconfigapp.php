@@ -61,9 +61,11 @@ class GateKeeperConfigApp extends App {
 
 		// groupManager
 		$container->registerService('GroupManager', function($c) {
-			return new \OC\Group\Manager(
-					$c->query('ServerContainer')->getUserManager()
-				);
+			return \OC_Group::getManager();
+			// return new \OC\Group\Manager(
+			// 		//$c->query('ServerContainer')->getUserManager()
+
+			// 	);
 		});
 
 		// - logger - 

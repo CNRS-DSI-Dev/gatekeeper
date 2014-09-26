@@ -22,6 +22,7 @@
 
 namespace OCA\GateKeeper\Service;
 use \OCA\GateKeeper\AppInfo\GKConstants as GK;
+use OCA\GateKeeper\Lib\GKHelper;
 
 class GateKeeperService {
 
@@ -29,6 +30,7 @@ class GateKeeperService {
 	var $session;
 	var $accessObjectMapper;
 	var $groupManager;
+	var $remote;
 	
 	public function __construct($mode, $session, $accessObjectMapper, $groupManager) {
 		$intMode = 0;
@@ -47,6 +49,7 @@ class GateKeeperService {
 		$this->accessObjectMapper = $accessObjectMapper;
 		$this->groupManager = $groupManager;
 		$this->cache = array();
+		$this->remote = GKHelper::isRemote();
 	}
 
 
@@ -56,11 +59,14 @@ class GateKeeperService {
 	 */
 	public function checkUserAllowances($user) {
 		$status = $this->session->get('gk_status');
-		if ( ! is_null($status) && strcmp($status, 'ok') === 0 ) return GateKeeperRespons::yetGranted();
-		if ( ! is_null($status) && strcmp($status, 'ko') === 0 ) return GateKeeperRespons::yetDenied();
+		\OCP\Util::writeLog('gatekeeper::checkUserAllowances','ANTE status='.$status, \OCP\Util::INFO);
+		
+		if ( ! is_null($status) && $status == 'ok' ) return GateKeeperRespons::yetGranted();
+		if ( ! is_null($status) && $status == 'ko' ) return GateKeeperRespons::yetDenied();
 
 		$respons = $this->isUserAllowed($user);
 		$status = ( $respons->isAllow() ) ? 'ok': 'ko';
+		\OCP\Util::writeLog('gatekeeper::checkUserAllowances','POST status='.$status, \OCP\Util::INFO);
 		$this->session->set('gk_status', $status);
 		return $respons;
 		

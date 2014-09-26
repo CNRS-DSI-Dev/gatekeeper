@@ -20,6 +20,7 @@
  *
  */
 namespace OCA\GateKeeper\Hooks;
+use OCA\GateKeeper\Lib\GKHelper;
 
 class GateKeeperHooks {
 
@@ -27,37 +28,52 @@ class GateKeeperHooks {
 	var $logger;
 
 	public function __construct($session, $logger) {
-		//$this->service = $gateKeeperService;
 		$this->session = $session;
 		$this->logger = $logger;
 	}
 
 
-	function onPreLogin (String $uid) {
+	/**
+	* remove gk_status from sessions's scope if it's not remote
+	*/
+	function onPreLogin ( $uid) {
+		$remote = GKHelper::isRemote();
 		$this->session->remove('gk_status');
+		\OCP\Util::writeLog('gatekeeperHOOKS::onPreLogin', $uid.' will log in'.(($remote) ? ' in remote mode': ''), \OCP\Util::INFO);
 	}
 
 	function onLogout(){
+		$remote = GKHelper::isRemote();
 		$this->session->remove('gk_status');
 	}
 
 	function onPostLogin (\OC\User\User $user) {
-		$this->logger->info('onPostLogin '.$user);
+		//$this->logger->info('onPostLogin '.$user);
 		
 	}
 
 
 	function onPostAddUser (\OC\Group\Group $group, \OC\User\User $user) {
-		$this->logger->info('onPostAddUser '.$user);
+		$remote = GKHelper::isRemote();
+		$this->logger->info('onPostAddUser '.$user->getUID());
+		\OCP\Util::writeLog('onPostAddUser', $user->getUID().' will log in'.(($remote) ? ' in remote mode': ''), \OCP\Util::INFO);
+		$this->session->remove('gk_status');
 	}
 
 	function onPostRemoveUser (\OC\Group\Group $group, \OC\User\User $user) {
-		$this->logger->info('onPostRemoveUser '.$user);
+		$remote = GKHelper::isRemote();
+		$this->logger->info('onPostRemoveUser '.$user->getUID());
+		\OCP\Util::writeLog('onPostRemoveUser', $user->getUID().' will log in'.(($remote) ? ' in remote mode': ''), \OCP\Util::INFO);
+		$this->session->remove('gk_status');
 	}
 	
 	function registerForUserEvents($userSession) {
 		$obj = $this;
-		$userSession->listen('\OC\User', 'preLogin', function(string $uid, string $password) use(&$obj) { 
+		$userSession->listen('\OC\User', 'preLogin', function( $uid,  $password) use(&$obj) { 
+			return $obj->onPreLogin($uid); 
+		});
+
+		$userSession->listen('\OC\User', 'preRememberedLogin', function( $uid )  use ($obj) {
 			return $obj->onPreLogin($uid); 
 		});
 
@@ -73,16 +89,10 @@ class GateKeeperHooks {
 	function registerForGroupEvents($groupManager) {
 		$obj = $this;
 		$groupManager->listen('\OC\Group', 'postAddUser', function ($group, $user) use (&$obj) {
-			/**
-			 * @var \OC\Group\Group $group
-			 */
-			$cachedUserGroups = array();
+			return $obj->onPostAddUser($group, $user);
 		});
 		$groupManager->listen('\OC\Group', 'postRemoveUser', function ($group, $user) use (&$obj) {
-			/**
-			 * @var \OC\Group\Group $group
-			 */
-			$cachedUserGroups = array();
+			return $obj->onPostRemoveUser($group, $user);
 		});
 	}
 }
