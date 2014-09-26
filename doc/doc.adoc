@@ -146,7 +146,7 @@ Un utilisateur doit être bloqué (vol de portable, défaillance, usurpation, ..
 
 cela aura pour effet que
 
-* En mode web, l'accès sera interdit à la prochaine ouverture de session
+* En mode web, l'accès sera interdit à la prochaine requête
 * En mode remote,  l'accès sera interdit au plus à l'écheance du _timer_ (actuellement 20 secondes)
 
 
