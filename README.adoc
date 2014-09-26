@@ -2,4 +2,4 @@
 
 Close or Open your service according groups
 
-include::doc/doc.adoc[]
+include::doc/doc.adoc[tabsize=4]
