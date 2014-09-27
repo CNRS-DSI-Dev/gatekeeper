@@ -47,6 +47,7 @@ class GateKeeperServiceTests extends \PHPUnit_Framework_TestCase {
 								->disableOriginalConstructor()
 								->getMock();
 
+		$_SERVER['REQUEST_URI'] = '/something';
 
 
 	}
@@ -54,15 +55,15 @@ class GateKeeperServiceTests extends \PHPUnit_Framework_TestCase {
 	public function testIsGroupAllowed_WHITELIST() {
 		//__setup
 		$this->service = new GateKeeperService(
-			GK::WHITELIST_MODE_INT,
+			GK::WHITELIST_MODE,
 			$this->session,
 			$this->accessObjectMapper,
 			$this->groupManager
 			);
 
 		$mockParmMap = array(
-			array('grp0', 	GK::WHITELIST_MODE_INT, true),
-			array('grp1', GK::WHITELIST_MODE_INT, false)
+			array('grp0', 	GK::WHITELIST_GROUP_TYPE, true),
+			array('grp1', GK::WHITELIST_GROUP_TYPE, false)
 			);
 		$this->accessObjectMapper->expects( $this->any() )->method('isGroupInMode')->will( $this->returnValueMap($mockParmMap) ) ;
 
@@ -73,18 +74,19 @@ class GateKeeperServiceTests extends \PHPUnit_Framework_TestCase {
 
 	}
 
+
 	public function testIsGroupAllowed_BACKLIST() {
 		//__setup
 		$this->service = new GateKeeperService(
-			GK::BLACKLIST_MODE_INT,
+			GK::BLACKLIST_MODE,
 			$this->session,
 			$this->accessObjectMapper,
 			$this->groupManager
 			);
 
 		$mockParmMap = array(
-			array('grp0', 	GK::BLACKLIST_MODE_INT, true),
-			array('grp1', GK::BLACKLIST_MODE_INT, false)
+			array('grp0', 	GK::BLACKLIST_GROUP_TYPE, true),
+			array('grp1', GK::BLACKLIST_GROUP_TYPE, false)
 			);
 		$this->accessObjectMapper->expects( $this->any() )->method('isGroupInMode')->will( $this->returnValueMap($mockParmMap) ) ;
 
@@ -97,10 +99,10 @@ class GateKeeperServiceTests extends \PHPUnit_Framework_TestCase {
 
 	public function testIsUserInMode_WHITELIST_group() {
 				//__setup
-		$this->setup_TEST_IsUserAllowed(GK::WHITELIST_MODE_INT, 
+		$this->setup_TEST_IsUserAllowed(GK::WHITELIST_MODE, 
 			array(
-				array('grp0', 	GK::WHITELIST_MODE_INT, true),
-				array('grp1', GK::WHITELIST_MODE_INT, false)
+				array('grp0', 	GK::WHITELIST_GROUP_TYPE, true),
+				array('grp1', GK::WHITELIST_GROUP_TYPE, false)
 			)
 		);
 		$this->groupManager->expects($this->any())
@@ -118,9 +120,9 @@ class GateKeeperServiceTests extends \PHPUnit_Framework_TestCase {
 
 	public function testIsUserInMode_WHITELIST_group_false() {
 				//__setup
-		$this->setup_TEST_IsUserAllowed(GK::WHITELIST_MODE_INT, 
+		$this->setup_TEST_IsUserAllowed(GK::WHITELIST_MODE, 
 			array(
-				array('grp1', GK::WHITELIST_MODE_INT, false)
+				array('grp1', GK::WHITELIST_GROUP_TYPE, false)
 			)
 		);
 		$this->groupManager->expects($this->any())
@@ -137,13 +139,40 @@ class GateKeeperServiceTests extends \PHPUnit_Framework_TestCase {
 
 	}
 
+	/**
+	* User is in WHITELIST but in EXCLUSION.
+	* User must not have access!
+	*/
+	public function testIsUserInMode_WHITELIST_EXCLUSION() {
+				//__setup
+		$this->setup_TEST_IsUserAllowed(GK::WHITELIST_MODE, 
+			array(
+				array('grp0', 	GK::WHITELIST_GROUP_TYPE, true),
+				array('grp1', GK::WHITELIST_GROUP_TYPE, false)
+			)
+		);
+		$this->groupManager->expects($this->any())
+						->method('getUserGroupIds')
+						->willReturn(array('grp0', 'grp1', 'badguys'));
+
+		$this->accessObjectMapper->expects( $this->any() )->method('findExclusionGroups')->willReturn( array('badguys') ) ;						
+
+		//__WEN__
+		$respons = $this->service->isUserAllowed($this->user);
+
+		$this->assertTrue( ! is_null($respons));
+		$this->assertTrue( $respons->isDenied(), "$respons");
+		$this->assertEquals( $respons->getGroup(), 'badguys');
+
+	}
+
 
 	public function testIsUserInMode_BLACKLIST_group() {
 				//__setup
-		$this->setup_TEST_IsUserAllowed(GK::BLACKLIST_MODE_INT, 
+		$this->setup_TEST_IsUserAllowed(GK::BLACKLIST_MODE, 
 			array(
-				array('grp0', GK::BLACKLIST_MODE_INT, true),
-				array('grp1', GK::BLACKLIST_MODE_INT, false)
+				array('grp0', GK::BLACKLIST_GROUP_TYPE, true),
+				array('grp1', GK::BLACKLIST_GROUP_TYPE, false)
 			)
 		);
 		$this->groupManager->expects($this->any())
@@ -162,10 +191,10 @@ class GateKeeperServiceTests extends \PHPUnit_Framework_TestCase {
 
 	public function testIsUserInMode_BLACKLIST_group_none() {
 				//__setup
-		$this->setup_TEST_IsUserAllowed(GK::BLACKLIST_MODE_INT, 
+		$this->setup_TEST_IsUserAllowed(GK::BLACKLIST_MODE, 
 			array(
-				array('grp0', 	GK::BLACKLIST_MODE_INT, false),
-				array('grp1', GK::BLACKLIST_MODE_INT, false)
+				array('grp0', 	GK::BLACKLIST_GROUP_TYPE, false),
+				array('grp1', GK::BLACKLIST_GROUP_TYPE, false)
 			)
 		);
 		$this->groupManager->expects($this->any())

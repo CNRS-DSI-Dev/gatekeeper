@@ -53,10 +53,10 @@ class SettingsController extends Controller {
 		$value = isset($params['value']) ? $params['value'] : null;
 
 		if ( is_null($value) )  {
-			throw new  \Exception("mode value can not be null", 1);
+			throw new  \Exception("mode $value can not be null", 1);
 		}
 		if ( ! GK::checkMode($value)) {
-			throw new  \Exception("mode value is incorrect", 1);	
+			throw new  \Exception("mode $value is incorrect", 1);	
 		}
 		$this->appConfig->setValue('gatekeeper','mode',$value);
 		return new JSONResponse( array('status' => 'ok') );
@@ -68,15 +68,15 @@ class SettingsController extends Controller {
 	public function searchGroup() {
 		\OC_Util::checkAdminUser();
 		$params = $this->request->get;
-		$mode = isset($params['mode']) ? $params['mode'] : null;
-		if ( is_null($mode) )  {
+		$kind = isset($params['kind']) ? $params['kind'] : null;
+		if ( is_null($kind) )  {
 			return new JSONResponse( array("msg" => "criteria is not specified"), Http::STATUS_BAD_REQUEST);
 		}
- 		if ( ! GK::checkMode($mode) ) {
+ 		if ( ! GK::checkGroupTypeLabel($kind) ) {
 			return new JSONResponse( array("msg" => "mode is not valid"), Http::STATUS_BAD_REQUEST);
 		}
 
-		$groups = $this->accessObjectMapper->findGroupsInMode(GK::modeToInt($mode));
+		$groups = $this->accessObjectMapper->findGroupsInMode(GK::modeToInt($kind));
 		$array = array();
 		if ( $groups ) {
 			foreach ($groups as $group) {
@@ -96,15 +96,14 @@ class SettingsController extends Controller {
 		$id = isset($params['group']) ? $params['group'] : null;
 		$name = isset($params['name']) ? $params['name'] : null;
 		$action = isset($params['action']) ? $params['action'] : null;
-		$mode = isset($params['mode']) ? $params['mode'] : null;
+		$groupType = isset($params['gt']) ? $params['gt'] : null;
 
-		if ( is_null($action) || is_null($mode)) {
-			return new JSONResponse( array("msg" => "Not specified action or mode"), Http::STATUS_BAD_REQUEST);
+		if ( is_null($action) || is_null($groupType)) {
+			return new JSONResponse( array("msg" => "Not specified action or group type"), Http::STATUS_BAD_REQUEST);
 		}
 
-		$intMode = GK::modeToInt($mode);
-		if ( ! $intMode ) {
-			return new JSONResponse( array("msg" => "mode ${mode} is not valid"), Http::STATUS_BAD_REQUEST);
+		if ( ! GK::checkGroupType($groupType) ) {
+			return new JSONResponse( array("msg" => "Group type ${groupType} is not valid"), Http::STATUS_BAD_REQUEST);
 		}
 		switch ($action) {
 			case 'rm':
@@ -118,9 +117,13 @@ class SettingsController extends Controller {
 				if ( is_null($name)) {
 					return new JSONResponse( array("msg" => "Not specified name"), Http::STATUS_BAD_REQUEST);
 				}
-				$ao = AccessObject::fromParams(array('name' => $name, 'mode' => $intMode));
-				$this->accessObjectMapper->insert($ao);
-				$id = $ao->getId();
+				if( $this->accessObjectMapper->isGroupInMode($name, $groupType) ) {
+					return new JSONResponse( array("msg" => "Group $name already exists in this list"), Http::STATUS_BAD_REQUEST);
+				} else {
+					$ao = AccessObject::fromParams(array('name' => $name, 'mode' => $groupType));
+					$this->accessObjectMapper->insert($ao);
+					$id = $ao->getId();
+				}
 				break;				
 			
 			default:

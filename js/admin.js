@@ -12,10 +12,11 @@ $('#gatekeeperForm') .ready(function () {
    $('<li>' + msg + '</li>') .appendTo( id+' ol');
  };
 
+
 	/********************************************************
 	* MODE function
 	*********************************************************/
-	$('#selectMode').change( function(e) {
+	$('input[name=mode]').change( function(e) {
 
     $('#gk_display_error') .empty();
 
@@ -27,12 +28,12 @@ $('#gatekeeperForm') .ready(function () {
     block.removeClass('gk_changed gk_error gk_saved');
     block.addClass('gk_changed');
 
-    var value = $('#selectMode option:selected').val();
-    var tValue = $('#selectMode option:selected').text();
+    var value = $('input[name=mode]:checked').val();
+    var tValue = $('input[name=mode]:checked').text();
     $.post(url, {
       value: value
     }, function (result) {
-      display('OK:'+tValue, 'info');
+      display(tValue+' mode is selected', 'info');
       block.removeClass('gk_changed gk_error gk_saved');
       block.addClass('gk_saved');
       block.removeClass('gk_saved', 2000);
@@ -64,11 +65,12 @@ $('#gatekeeperForm') .ready(function () {
 	// });
 
 
+  var mode2group = { "whitelist": 1, "blacklist": 2, "exclusion": 3};
   /**
   * Add A List Item
   */
-  var addListItem = function(mode, grpId, grpName, list) {
-    var id = 'gk_action_'+mode+'_'+grpId;
+  var addListItem = function(kind, grpId, grpName, list) {
+    var id = 'gk_action_'+kind+'_'+grpId;
     var img = '<img src="/core/core/img/actions/delete.svg" class="svg action">';
     var span = '<span>'+grpName+'</span>';
     var li = $('<li><a id="'+id+'" class="action delete">'+img+'</a>'+span+'</li>');
@@ -86,14 +88,14 @@ $('#gatekeeperForm') .ready(function () {
     var anchorId = anchor.attr('id');
     var parts = anchorId.split('_');
     var grpId = parts[parts.length - 1 ];
-    var mode = parts[parts.length - 2 ];
+    var kind = parts[parts.length - 2 ];
     var name = li.find('span').text();
 
     li.removeClass('gk_changed gk_error gk_saved');
     li.addClass('gk_changed');
-    postUpdate({group: grpId, action: 'rm', mode: mode }, 
+    postUpdate({group: grpId, action: 'rm', gt: mode2group[kind] }, 
       function() {
-        display(name+' removed  from '+mode, 'info');
+        display(name+' removed  from '+kind, 'info');
         showSuccess(li);
         li.remove();
       }
@@ -114,7 +116,7 @@ $('#gatekeeperForm') .ready(function () {
       li.addClass('gk_error');
   }
 
-  var postUpdate = function(parms, onSuccess, onFail) {
+  var postUpdate = function(parms, onSuccess, onFail, onAlways) {
 
     $.post(groupUrl, parms)
     .done(function(data){
@@ -125,46 +127,58 @@ $('#gatekeeperForm') .ready(function () {
       if( typeof onFail == 'function' ) onFail();
       $('#gk_display_error') .text(jqXHR.responseJSON.msg);
     })
+    .always( function() {
+       if( typeof onAlways == 'function' ) onAlways();
+    })
 
   }
 
-  var registerGroupInModeList = function(mode) {
-    var name = $('#gkGroupName_'+mode).val();
-    var list = $('#gkList_'+mode);
-    var addButton = $('#gkAddButton_'+mode);
+  var registerGroup = function(kind) {
+    var name = $('#gkGroupName_'+kind).val();
+    var list = $('#gkList_'+kind);
+    var addButton = $('#gkAddButton_'+kind);
     addButton.addClass('loading');
-    var id = postUpdate({name: name, action: 'add', mode: mode }, function(){
-      addButton.removeClass('loading');
-      var li = addListItem(mode, id, name, list);
-      showSuccess(li);
-      $('#gkGroupName_'+mode).attr('value','');
-      display(name+' added in '+mode, 'info');
-    });
+    var id = postUpdate({name: name, action: 'add', gt: mode2group[kind] }, 
+      function(){
+        var li = addListItem(kind, id, name, list);
+        showSuccess(li);
+        $('#gkGroupName_'+kind).attr('value','');
+        display(name+' added in '+kind, 'info');
+      },
+      null,
+      function() {
+        addButton.removeClass('loading');
+      }
+    );
   }
 
 
   /**
-  * Load group according to mode
+  * Load groups according to kind
   */
-  var loadGroupByMode = function(mode) {
+  var loadGroups = function(kind) {
 
-    var loadButton = $('#gkLoadButton_'+mode);
+    var loadButton = $('#gkLoadButton_'+kind);
 
     loadButton.addClass('loading');
 
-    var list = $('#gkList_'+mode);
+    var list = $('#gkList_'+kind);
     list.empty();
 
-    $.get(groupUrl, { mode: mode} )
+    $.get(groupUrl, { kind: kind} )
     .done(function(data){
-      loadButton.removeClass('loading');
+      if ( data.length == 0 ) {
+        list.append('<p>0 group</p>');
+      } 
       for (var i=0; i<data.length; i++) {
         var grp = data[i];
-        addListItem(mode, grp.id, grp.name, list);
+        addListItem(kind, grp.id, grp.name, list);
       }
     })
     .fail(function(jqXHR,  textStatus, errorThrown){
       $('#gk_display_error').text(textStatus);
+    }).always(function() {
+      loadButton.removeClass('loading');
     });
 
   }
@@ -176,20 +190,28 @@ $('#gatekeeperForm') .ready(function () {
   * ---------------------------------------------------------
   */
   $('#gkLoadButton_whitelist').click(function(e) {
-    loadGroupByMode('whitelist');
+    loadGroups('whitelist');
   });
 
   $('#gkAddButton_whitelist').click(function(e) {
-    registerGroupInModeList('whitelist');
+    registerGroup('whitelist');
   });
 
   $('#gkLoadButton_blacklist').click(function(e) {
-    loadGroupByMode('blacklist');
+    loadGroups('blacklist');
   });
 
   $('#gkAddButton_blacklist').click(function(e) {
-    registerGroupInModeList('blacklist');
+    registerGroup('blacklist');
   });
+
+  $('#gkLoadButton_exclusion').click(function(e) {
+    loadGroups('exclusion');
+  });
+
+  $('#gkAddButton_exclusion').click(function(e) {
+    registerGroup('exclusion');
+  });  
 
 
 

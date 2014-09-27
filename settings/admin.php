@@ -29,8 +29,8 @@ $app = new OCA\GateKeeper\AppInfo\GateKeeperConfigApp();
 $tmpl->assign('selected', OCP\Config::getAppValue($appName, 'mode'));
 
 $accessObjectMapper = $app->getContainer()->query('AccessObjectMapper');
-$whitelist = $accessObjectMapper->findGroupNamesInMode(GK::WHITELIST_MODE_INT);
-$blacklist = $accessObjectMapper->findGroupNamesInMode(GK::BLACKLIST_MODE_INT);
+$whitelist = $accessObjectMapper->findGroupNamesInMode(GK::WHITELIST_GROUP_TYPE);
+$blacklist = $accessObjectMapper->findGroupNamesInMode(GK::BLACKLIST_GROUP_TYPE);
 
 $tmpl->assign('whitelist', $whitelist);
 $tmpl->assign('blacklist', $blacklist);

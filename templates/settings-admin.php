@@ -23,8 +23,8 @@ use \OCA\GateKeeper\AppInfo\GKConstants as GK;
 
 \OCP\Util::addScript('gatekeeper', 'admin');
 \OCP\Util::addStyle('gatekeeper', 'gk');
-$selected = array(GK::WHITELIST_MODE => '', GK::BLACKLIST_MODE => '', GK::OPENED_GATE_MODE => '');
-$selected[$_['selected']] = 'selected';
+$selected = array(GK::WHITELIST_MODE => '', GK::BLACKLIST_MODE => '', GK::OPENED_GATE_MODE => '', GK::MINIMAL_MODE => '');
+$selected[$_['selected']] = 'checked';
 function select($key) { 
 	p($selected[$key]); 
 }
@@ -34,22 +34,27 @@ function select($key) {
 	<pre id="gk_display_error" class="gk_error"></pre>
 	<form id="gatekeeperForm">
 		<fieldset>
-			<div class="block">
 				<label class="label" for="mode"><?php p($l->t('Select Mode'));?></label>
-				<select id="selectMode" name="mode" title="<?php p($l->t('Select mode'));?>">
-					<option value="<?php p(GK::WHITELIST_MODE);?>" <?php p($selected[GK::WHITELIST_MODE]);?>>
-						<?php p($l->t('WhiteList'));?></option>
-					<option value="<?php p(GK::BLACKLIST_MODE);?>" <?php p($selected[GK::BLACKLIST_MODE]);?>>
-						<?php p($l->t('BlackList'));?></option>
-					<option value="<?php p(GK::OPENED_GATE_MODE);?>" <?php p($selected[GK::OPENED_GATE_MODE]);?>>
-						<?php p($l->t('Opengate'));?></option>
-				</select>
-			</div>
-			<ul class="gk_ul_explanations">
-					<li><?php p($l->t('WhiteList mode: only members of groups inlisted in whitelist would access to service'));?></li>
-					<li><?php p($l->t('Blacklist mode: only members of groups inlisted in blacklist would NOT access to service'));?></li>
-					<li><?php p($l->t("Opengate mode: GateKeeper doesn't care"));?></li>
-			</ul>
+				<div class="block">
+					<label class="label" for="mode"><?php p($l->t('WhiteList'));?></label>
+					<input type="radio" name="mode"  value="<?php p(GK::WHITELIST_MODE);?>" <?php p($selected[GK::WHITELIST_MODE]);?>>
+						<?php p($l->t('Only groups in this white list are allowed EXCEPT those in EXCLUSION list'));?>
+				</div>
+				<div class="block">
+					<label class="label" for="mode"><?php p($l->t('BlackList'));?></label>
+					<input type="radio" name="mode"  value="<?php p(GK::BLACKLIST_MODE);?>" <?php p($selected[GK::BLACKLIST_MODE]);?>>
+						<?php p($l->t('Only groups in this black list are denied PLUS those in EXCLUSION list'));?>
+				</div>
+				<div class="block">
+					<label class="label" for="mode"><?php p($l->t('Minimal'));?></label>
+					<input type="radio" name="mode"  value="<?php p(GK::MINIMAL_MODE);?>" <?php p($selected[GK::MINIMAL_MODE]);?>>
+						<?php p($l->t('Only groups in EXCLUSION list are denied'));?>
+				</div>
+				<div class="block">
+					<label class="label" for="mode"><?php p($l->t('Opengate'));?></label>
+					<input type="radio" name="mode"  value="<?php p(GK::OPENED_GATE_MODE);?>" <?php p($selected[GK::OPENED_GATE_MODE]);?>>
+						<?php p($l->t('No checking is done'));?>
+				</div>
 		</fieldset>
 		<!-- TABULATIONS -->
 		<div id="gkTabs">
@@ -57,6 +62,7 @@ function select($key) {
 			<ul>
 				<li><a href="#gkTabs-1"><?php p($l->t('White List'));?></a></li>
 				<li><a href="#gkTabs-2"><?php p($l->t('Black list'));?></a></li>
+				<li><a href="#gkTabs-3"><?php p($l->t('Exclusion List'));?></a></li>			
 			</ul>
 
 			<fieldset id="gkTabs-1">
@@ -77,6 +83,15 @@ function select($key) {
 				<ul class="gk_ul_double" id="gkList_blacklist">
 				</ul>
 			</fieldset>
+			<fieldset id="gkTabs-3">
+				<div class="block">
+					<input type="text" id="gkGroupName_exclusion" placeholder="<?php p($l->t('Enter Group Name'));?>">
+					<button type="button" id="gkAddButton_exclusion"><?php p($l->t('Add to list'));?></button>
+				</div>
+				<button type="button" id="gkLoadButton_exclusion"><?php p($l->t('Display List'));?></button>
+				<ul class="gk_ul_double" id="gkList_exclusion">
+				</ul>
+			</fieldset>			
 		</div>
 	</form>
 	<div id="gk_display_info"></div>

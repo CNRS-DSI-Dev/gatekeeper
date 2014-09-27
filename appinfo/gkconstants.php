@@ -23,40 +23,52 @@ namespace OCA\GateKeeper\AppInfo;
 
 class GKConstants {
 	
-	const UID_KIND 		= 1;
-	const GROUP_KIND 	= 2;
-	const WHITELIST_MODE_INT= 1;
-	const BLACKLIST_MODE_INT= 2;
+	const WHITELIST_GROUP_TYPE 	= 1;
+	const BLACKLIST_GROUP_TYPE 	= 2;
+	const EXCLUSION_GROUP_TYPE = 3;
 	const MANAGER_MODE_INT	= 9;
 	const OPENED_GATE_MODE_INT= 8;
 	const WHITELIST_MODE = 'whitelist';
 	const BLACKLIST_MODE = 'blacklist';
 	const OPENED_GATE_MODE = 'opened';
+	const MINIMAL_MODE = 'exclusion_only';
+	const EXCLUSION_GROUP_LABEL = 'exclusion';
 
 
 	public static function checkMode($mode) {
-		if ($mode == self::WHITELIST_MODE 
+		if ($mode == self::WHITELIST_MODE	 
 			|| $mode == self::BLACKLIST_MODE 
-			|| $mode == self::OPENED_GATE_MODE ) { 
+			|| $mode == self::OPENED_GATE_MODE
+			|| $mode == self::MINIMAL_MODE ) { 
 			return true;
 		}
 		return false;
 	}
 
-	public static function checkModeInt($mode) {
-		if ($mode === self::WHITELIST_MODE_INT 
-			|| $mode === self::BLACKLIST_MODE_INT 
-			|| $mode === self::OPENED_GATE_MODE_INT ) { 
+	public static function checkGroupTypeLabel($mode) {
+		if ($mode == self::WHITELIST_MODE	 
+			|| $mode == self::BLACKLIST_MODE 
+			|| $mode == self::EXCLUSION_GROUP_LABEL ) { 
+			return true;
+		}
+		return false;
+	}
+
+	public static function checkGroupType($mode) {
+		if ($mode == self::WHITELIST_GROUP_TYPE 
+			|| $mode == self::BLACKLIST_GROUP_TYPE 
+			|| $mode == self::EXCLUSION_GROUP_TYPE ) { 
 			return $mode;
 		}
 		return false;
 	}	
 
 	static function modeToInt($mode) {
-		if ( self::checkModeInt($mode)) return $mode;
-		if( $mode == self::WHITELIST_MODE) $intMode = self::WHITELIST_MODE_INT;
-		if( $mode == self::BLACKLIST_MODE) $intMode = self::BLACKLIST_MODE_INT;
-		if( $mode == self::OPENED_GATE_MODE) $intMode = self::OPENED_GATE_MODE_INT;
+		if ( self::checkGroupType($mode)) return $mode;
+		if( $mode == self::WHITELIST_MODE) $intMode = self::WHITELIST_GROUP_TYPE;
+		if( $mode == self::BLACKLIST_MODE) $intMode = self::BLACKLIST_GROUP_TYPE;
+		if( $mode == self::EXCLUSION_GROUP_LABEL) $intMode = self::EXCLUSION_GROUP_TYPE;
+		if( $mode == self::OPENED_GATE_MODE) $intMode = 0;
 		return $intMode;
 	}
 }

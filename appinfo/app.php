@@ -32,7 +32,7 @@ if ( !  \OC_App::isEnabled( 'gatekeeper') ) {
 
 $app = new GateKeeperConfigApp();
 
-if ( !$app->isGateActivated() ) {
+if ( !$app->isGateOpened() ) {
 	return;
 }
 

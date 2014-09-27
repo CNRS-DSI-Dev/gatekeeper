@@ -100,6 +100,7 @@ class Interceptor {
 		$fmt = array(
 			'uid.blacklisted' 	=> "You do not have access to this service. Please contact your administrator with theses informations: uid=%s.",
 			'group.blacklisted' => "You do not have access to this service. Please contact your administrator with theses informations: uid=%s,group=%s.",
+			'group.exclusion' => "You do not have access to this service because of exclusion. Please contact your administrator with theses informations: uid=%s,cause=exclusion.",
 			'not.whitelisted' 	=> "Access to this service is restricted. Please contact your administrator with this information: uid=%s.",
 			);
 		$key = $respons->getCause();

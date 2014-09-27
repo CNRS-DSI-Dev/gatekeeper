@@ -31,6 +31,10 @@
 .gk_ul_explanations {
   margin-left: 250px;
 }
+
+.gk_help li {
+  list-style: circle inside;
+}
 .gk_ul_double {
     border-top: 1px solid #ccc;
     margin-bottom: 20px;

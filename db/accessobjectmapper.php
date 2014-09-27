@@ -40,7 +40,7 @@ class AccessObjectMapper extends Mapper {
     }
 
     public function modeToInt($mode) {
-    	return ($mode) ? GK::WHITELIST_MODE_INT : GK::BLACKLIST_MODE_INT;
+    	return ($mode) ? GK::WHITELIST_GROUP_TYPE : GK::BLACKLIST_GROUP_TYPE;
     }
 
     public function isGroupInMode($groupName, $mode) {
@@ -67,6 +67,12 @@ class AccessObjectMapper extends Mapper {
     public function findGroupNamesInMode($mode) {
          $sql = 'SELECT name FROM `'.$this->getTableName().'` WHERE  `mode`=?';
          $params = array($mode);
+        return $this->getNames($sql, $params, $limit, $offset);
+    }
+
+    public function findExclusionGroups() {
+        $sql = 'SELECT name FROM `'.$this->getTableName().'` WHERE  `mode`=?';
+        $params = array(GK::EXCLUSION_GROUP_TYPE);
         return $this->getNames($sql, $params, $limit, $offset);
     }
 

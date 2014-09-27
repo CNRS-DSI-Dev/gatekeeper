@@ -22,6 +22,7 @@
 namespace OCA\GateKeeper\AppInfo;
 use \OCP\AppFramework\App;
 use \OCA\GateKeeper\AppInfo\GKConstants as GK;
+use \OCA\GateKeeper\Lib\GKHelper;
 
 /**
  *
@@ -47,7 +48,8 @@ class GateKeeperConfigApp extends App {
 				$c->query('ServerContainer')->getAppConfig()->getValue('gatekeeper', 'mode' ),
 				$c->query('ServerContainer')->getSession(),
 				$c->query('AccessObjectMapper'), 
-				$c->query('GroupManager')
+				$c->query('GroupManager'),
+				GKHelper::isRemote()
 				);
 		});
 
@@ -104,7 +106,7 @@ class GateKeeperConfigApp extends App {
 		return $this->getContainer()->query('GroupManager');	
 	}
 
-	public function isGateActivated() {
+	public function isGateOpened() {
 		 $mode = $this->getContainer()->getServer()->getAppConfig()->getValue('gatekeeper', 'mode' );
 		 if ( ! is_null($mode) && strcmp($mode, GK::OPENED_GATE_MODE) != 0  ) {
 		 	return true;

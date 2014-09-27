@@ -28,9 +28,11 @@ class GKHelper {
 	* @return bool true if request is about '/core/remote.php'
 	*/
 	public static function isRemote() {
-		$path = self::path($_SERVER['REQUEST_URI']);
-		if ( strpos($path, '/core/remote.php') === 0 ) {
-			return true;
+		if ( isset($_SERVER['REQUEST_URI'])) {
+			$path = self::path($_SERVER['REQUEST_URI']);
+			if ( strpos($path, '/core/remote.php') === 0 ) {
+				return true;
+			}
 		}
 		return false;
 	}

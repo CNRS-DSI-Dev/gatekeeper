@@ -30,31 +30,37 @@ use OCA\GateKeeper\Lib\GKHelper;
 */
 class GateKeeperService {
 
-	var $mode;
+	var $whiteListMode = false;
+	var $blackListMode = false;
+	var $minimalMode = false;
+	var $groupType  = -1;
 	var $session;
 	var $accessObjectMapper;
 	var $groupManager;
 	var $remote;
 	var $delay = 30;
 	
-	public function __construct($mode, $session, $accessObjectMapper, $groupManager) {
-		$intMode = 0;
-		if ( is_string($mode) ) {
-			$intMode = GK::modeToInt($mode);
-		} else if ( ! GK::checkModeInt($mode) ){
-			throw new \Exception("Mode after check $mode is not valid", 1);	
-		} else {
-			$intMode = $mode;
+	public function __construct( $mode, $session, $accessObjectMapper, $groupManager, $remote=FALSE) {
+		if ( ! is_string($mode) || ! GK::checkMode($mode) ) {
+			throw new \Exception("Mode $mode is invalid");
 		}
-		if ( ! $intMode  ) {
+	
+		if ( ! GK::checkMode($mode) ){
 			throw new \Exception("Mode $mode is not valid", 1);	
-		}	
-		$this->mode = $intMode;
+		}
+
+		$this->whiteListMode 	= ( $mode === GK::WHITELIST_MODE);
+		$this->blackListMode 	= ( $mode === GK::BLACKLIST_MODE);
+		$this->minimalMode 		= ( $mode === GK::MINIMAL_MODE);
+
+		if ( ! $this->minimalMode ) {
+			$this->groupType = GK::modeToInt($mode);
+		}
 		$this->session = $session;
 		$this->accessObjectMapper = $accessObjectMapper;
 		$this->groupManager = $groupManager;
 		$this->cache = array();
-		$this->remote = GKHelper::isRemote();
+		$this->remote = $remote;
 	}
 
 
@@ -119,17 +125,33 @@ class GateKeeperService {
 
 		$groupIds = $this->groupManager->getUserGroupIds($user);
 
-		$whiteList = $this->isModeAllow();
-		$blackList = ! $whiteList;
+		$whiteList = $this->whiteListMode;
+		$blackList = $this->blackListMode;
+		$minimalMode  = $this->minimalMode;
+
 		$uid = $user->getUID() ;
 
 		if ( ! is_null($groupIds) && ! empty($groupIds) ) {
-			foreach ($groupIds as $g) {
-				if ( $whiteList && $this->isGroupAllowed($g) ) {
-					return $respons;
+
+			$exclusionGroup = $this->getExclusionGroups();
+
+			if ( count($exclusionGroup) > 0 ) {
+
+				$excluded = array_intersect($groupIds, $exclusionGroup);
+
+				if ( ! empty($excluded) ) {
+					return $respons->deny('group.exclusion', $uid, join(",",$excluded));
 				}
-				if ( $blackList && ! $this->isGroupAllowed($g) ) {
-					return $respons->deny('group.blacklisted', $uid, $g);
+			}
+
+			if ( ! $this->minimalMode ) {
+				foreach ($groupIds as $g) {
+					if ( $whiteList && $this->isGroupAllowed($g) ) {
+						return $respons;
+					}
+					if ( $blackList && ! $this->isGroupAllowed($g) ) {
+						return $respons->deny('group.blacklisted', $uid, $g);
+					}
 				}
 			}
 		}
@@ -139,21 +161,24 @@ class GateKeeperService {
 		return $respons;
 	}
 
+	public function getExclusionGroups() {
+		return $this->accessObjectMapper->findExclusionGroups();
+	}
 
 	public function isModeAllow() {
-		return $this->mode === GK::WHITELIST_MODE_INT;
+		return $this->mode === GK::WHITELIST_GROUP_TYPE;
 	}
 
 	public function isGroupAllowed($groupName) {
-		$inMode = $this->accessObjectMapper->isGroupInMode($groupName, $this->mode);
-		return $this->answer($inMode);
+		$asExpected = $this->accessObjectMapper->isGroupInMode($groupName, $this->groupType);
+		return $this->answer($asExpected);
 	}
 
-	public function answer($inMode) {
-		if ( $this->isModeAllow() ) {
-			return $inMode;
-		} else {
-			return ! $inMode;
+	public function answer($asExpected) {
+		if ( $this->whiteListMode ) {
+			return $asExpected;
+		} else if ( $this->blackListMode ) {
+			return ! $asExpected;
 		}
 	}
 
