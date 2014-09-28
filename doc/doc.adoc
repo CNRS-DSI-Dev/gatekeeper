@@ -173,9 +173,7 @@ L'administration des autorisations se fait en **trois** étapes
 
 Dans l'écran d'administration, choisir un mode
 
-* En mode liste blanche, il suffit d'une authorisation pour être autorisée
-* En mode liste noire, il suffit d'une interdiction pour être interdit 
-* En mode _porte ouverte_, aucune vérification n'est effectuée.
+Pour plus de détails, cf <<Détail des évaluations selon les modes>>
 
 === Gestion des liste
 
