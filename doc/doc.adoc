@@ -193,10 +193,16 @@ Cliquer sur l'icone _poubelle_
 
 === Gestion des personnes
 
-Nous recommandons par conventions de créer deux groupes d'utilisateurs
+Nous recommandons par conventions de créer au moins trois groupes d'utilisateurs
 
-. forbidden qui sera le groupe des utilisateurs interdits d'accès
-. allowed qui sera le groupe des utilisateurs autorisés
+. _interdits_ qui sera le groupe des utilisateurs interdits d'accès
+. _autorisés_ qui sera le groupe des utilisateurs autorisés
+. _exclus_ qui sera le groupe des utilisateurs exclus
+
+Ensuite ajouter ces groupes dans les listes de groupes idoines
+. _interdits_ dans _liste noire_
+. _autorisés_ dans _liste blanche_
+. _exclus_ dans _liste d'exclusion_
 
 
 ==== Ajouter une personne dans un groupe
