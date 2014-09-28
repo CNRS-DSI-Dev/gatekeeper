@@ -18,7 +18,7 @@ $('#gatekeeperForm') .ready(function () {
 	*********************************************************/
 	$('input[name=mode]').change( function(e) {
 
-    $('#gk_display_error') .empty();
+    $('#gk_display_error').empty();
 
 
     var url = OC.generateUrl('apps/gatekeeper/api/settings/mode/');
@@ -29,11 +29,10 @@ $('#gatekeeperForm') .ready(function () {
     block.addClass('gk_changed');
 
     var value = $('input[name=mode]:checked').val();
-    var tValue = $('input[name=mode]:checked').text();
     $.post(url, {
       value: value
     }, function (result) {
-      display(tValue+' mode is selected', 'info');
+      display(value+' mode is selected', 'info');
       block.removeClass('gk_changed gk_error gk_saved');
       block.addClass('gk_saved');
       block.removeClass('gk_saved', 2000);

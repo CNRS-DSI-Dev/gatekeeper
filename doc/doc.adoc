@@ -1,21 +1,91 @@
 = GateKeeper
+:usergroup: groupe de l'utilisateur
+:exclusionlist: liste d'exclusions
+:whitelist: liste blanche
+:blacklist: liste noire
 
 GateKeeper est une application owncloud dont l'objet est d'autoriser ou interdire d'accès des utilisateurs en fonction de leurs groupes.
 
 == Logique
 
-GateKeeper fonctionne sur le principe des `listes blanches` et des `listes noires`.
+OwnCloud permet d'associer un utilisateur à un ou plusieurs groupes.
+GateKeeper permet d'associer ces groupes à des _listes de groupes_, sortes de groupe de groupes d'utilisateurs.  
+GateKeeper évalue l'accès d'un utilisateur en comparant ses groupes à ses listes de groupes.
 
-* Une liste blanche est constituée des groupes dont les utilisateurs  sont les **seuls** à pouvoir utiliser les services de Owncloud.
-* Une liste noire est constituée des groupes dont les utilisateurs sont les **seuls** à **ne pas* pouvoir utiliser les services de Owncloud.
+Les principales listes de groupes sont la `liste blanche` et la `liste noire`.
 
-GateKeeper fonctionne selon trois <<mode>>s
+* Une liste blanche contient les groupes dont les utilisateurs peuvent utiliser les services de Owncloud.
+* Une liste noire contient les groupes dont les utilisateurs **ne peuvent pas** utiliser les services de Owncloud.
 
-* En mode liste blanche, il suffit d'une authorisation pour être autorisée
-* En mode liste noire, il suffit d'une interdiction pour être interdit 
-* En mode _porte ouverte_, aucune vérification n'est effectuée.
+L'utilisation de ces listes de groupes est modulée par l'orientation, appelée _mode_, utilisée
+
+* En mode liste blanche, il suffit d'avoir un groupe dans la liste blanche pour être autorisé
+* En mode liste noire, il suffit d'avoir un groupe dans la liste noire pour être interdit
+
+A noter que **les deux listes ne sont pas utilisées en même temps** , mais selon le mode sélectionné. 
+
+En effet, le besoin originel de GateKeeper est de permettre une mise en place d'un service OwnCloud en deux phases
+
+* phase pilote, où un nombre restreint d'utilisateurs accèdent au service, souvent avant la mise en production
+* phase de production, où un nombre restreint d'utilisateurs, pour des cas particuliers, se voient interdit l'accès au service.
+
+=== Principe d'exclusion
+
+Pour compléter le fonctionnement et répondre au besoin d'une exclusion nécessaire de certains utilisateurs, que ce soit en mode liste noire ou liste blanche, il existe une troisième liste de groupes, la `liste d'exclusion`, que l'on peut assimiler à une liste noire qui sera **toujours appliquée**
+
+De plus, du point de vue gestion des utilisateurs, les trois listes répondent à des objectifs différents
+
+* La liste blanche et la liste noire sont des autorisations ou interdictions simples, liées à l'offre d'un service (ouverture du service à des types d'utilisateurs, des services ou des clients)
+* la liste d'exclusion est une gestion des interdictions plus radicale et parfois irrévocable (usurpation d'identité, violation des CGU, etc...)
+
+Cela vous permet de moduler votre gestion car ces listes sont des listes de groupes. Vous pouvez donner une signification à vos groupes pour vous assister dans votre gestion. 
+
+Voici un exemple de composition
+
+* Liste blanche
+** groupe "utilisateurs recette"
+** groupe "utilisateurs test"
+** groupe "site pilote 1"
+** groupe "site pilote 2"
+* Liste noire
+** groupe "En attente de validation"
+** groupe "en cours de provisionning"
+* Liste d'exclusion
+** groupe "usurpation d'identité"
+** groupe "violation des CGU"
+** groupe "activités illégales"
+
+GateKeeper peut alors fonctionner selon trois <<mode>>s principaux
+
+* mode _liste blanche_, 
+* mode _liste noire_, 
+* mode _minimal_,
+* mode _porte ouverte_.
+
+== Détail des évaluations selon les modes
 
 
+==== Mode Liste Blanche
+
+. Si un _{usergroup}_ appartient à la _{exclusionlist}_ alors l'accès est **refusé**
+. Si au moins un _{usergroup}_ appartient à la _{whitelist}_ alors l'accès est **accordé**
+. Sinon l'accès est **refusé**
+
+
+==== Mode Liste Noire
+
+. Si un _{usergroup}_ appartient à la _{exclusionlist}_ alors l'accès est **refusé**
+. Si au moins un _{usergroup}_ appartient à la _{blacklist}_ alors l'accès est **refusé**
+. Sinon l'accès est **accordé**
+
+==== Mode minimal
+
+. Si un _{usergroup}_ appartient à la _{exclusionlist}_ alors l'accès est **refusé**
+. Sinon l'accès est **accordé**
+
+==== Mode ouvert
+
+. l'accès est toujours **accordé**
 
 == Architecture
 
@@ -64,6 +134,31 @@ La méthode `hasToRefresh` évalue si il y a lieu de procéder à une évaluatio
 . Elle positionne un _timer_
 . en deça d'un certain délai (variable _delay_) elle estime que la précédente évaluation est encore valable
 . au dessus, elle réinitialise le _timer_ et estime qu'une nouvelle évaluation est nécessaire.
+
+
+=== Interceptor
+La logique de l'intercepteur est très simple :
+
+. Pour chaque requête HTTP
+. Si l'utilisateur est identifé et connecté OU si il s'agit d'une requête d'un client de synchronisation (mode _remote.php_ )
+. Demander au _GateKeeperService_ une évaluation de l'utilisateur
+. Si l'évaluation est négative
+.. Déconnecter de force l'utilisateur (logout)
+.. Afficher un message en mode Web OU envoyer une exception en mode remote
+
+=== GateKeeperHooks
+
+Les Hooks font appels aux méthodes de balisage de GateKeeperService à certains évènements
+
+. sur _preLogin_, appele startCycle($uid)
+. sur _logout_, appele endCycle()
+
+=== Prise en compte du changement de groupe 
+
+Le mécanisme mis en place par GateKeeper prend effet dans les conditions suivantes
+
+* En mode web, l'accès sera interdit/autorisé à la prochaine requête
+* En mode remote,  l'accès sera interdit/interdit au plus à l'écheance du _timer_ (actuellement 20 secondes)
 
 == Administration
 
@@ -114,41 +209,36 @@ Nous recommandons par conventions de créer deux groupes d'utilisateurs
 == Exemples
 
 === Cas d'usage
-Vous voulez limiter les accès à certains utilisateurs. 
+==== Vous voulez limiter les accès à certains utilisateurs de tests. 
 
 . Passer en mode _liste blanche_
-. Ajouter le groupe _allowed_ à la liste blanche
-. Ajouter dans l'écran de gestion des utilisateurs tous les utilisateurs autorisé à _allowed_
+. Ajouter le groupe _testeurs_ à la liste blanche
+. Ajouter dans l'écran de gestion des utilisateurs tous les utilisateurs autorisé à _testeurs_
 
 
-Vous voulez interdire les accès à certains utilisateurs. 
+==== Vous voulez interdire les accès à certains utilisateurs. 
 
 . Passer en mode _liste noire_
-. Ajouter le groupe _forbidden_ à la liste blanche
-. Ajouter dans l'écran de gestion des utilisateurs tous les utilisateurs autorisé à _forbidden_
+. Ajouter le groupe _attente_feu_vert_dircom_ à la liste noire
+. Ajouter dans l'écran de gestion des utilisateurs tous les utilisateurs bloqués à _attente_feu_vert_dircom_
 
-
-Vous voulez gérer les accès de classes d'utilisateurs.
+==== Vous voulez gérer les accès de classes d'utilisateurs.
 
 Dans certains cas, il est plus facile de gérer des classes d'utilisateurs que des utilisateurs individuelles.
 
 . Faite en sorte que cette classe soit associée à un groupe ( utilisation d'applications de provisionning.footnote:[Comme user_servervars2.] )
-. Associer le groupe à une liste (blanche ou noire)
-. Passer dans le mode recherché
+. Associez le groupe à une liste (blanche ou noire)
+. Passez dans le mode recherché
 
 
 === Bloquer/Débloquer un utilisateur
 
-Un utilisateur doit être bloqué (vol de portable, défaillance, usurpation, ...)
+Un utilisateur doit être bloqué 
 
+Si le cas est une étape de vos procédures (adhésion, attente validation)
 * En mode liste blanche, retirez le de tous les groupes autorisés
-* En mode liste noire, ajoutez le dans le groupe _forbidden_
+* En mode liste noire, ajoutez le dans le groupe _attente_feu_vert_dircom_
 
-cela aura pour effet que
-
-* En mode web, l'accès sera interdit à la prochaine requête
-* En mode remote,  l'accès sera interdit au plus à l'écheance du _timer_ (actuellement 20 secondes)
-
-
-
+Si le cas est un cas plus exceptionnel (vol de portable, défaillance, usurpation, ...)
+* Quelque soit le mode (sauf _mode ouvert_) ajoutez le à un groupe de la liste d'exclusion
 
