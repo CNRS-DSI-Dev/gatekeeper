@@ -4,6 +4,8 @@
 :whitelist: liste blanche
 :blacklist: liste noire
 
+:toc:
+
 GateKeeper est une application owncloud dont l'objet est d'autoriser ou interdire d'accès des utilisateurs en fonction de leurs groupes.
 
 == Logique
@@ -240,9 +242,11 @@ Dans certains cas, il est plus facile de gérer des classes d'utilisateurs que d
 Un utilisateur doit être bloqué 
 
 Si le cas est une étape de vos procédures (adhésion, attente validation)
+
 * En mode liste blanche, retirez le de tous les groupes autorisés
 * En mode liste noire, ajoutez le dans le groupe _attente_feu_vert_dircom_
 
 Si le cas est un cas plus exceptionnel (vol de portable, défaillance, usurpation, ...)
+
 * Quelque soit le mode (sauf _mode ouvert_) ajoutez le à un groupe de la liste d'exclusion
 
