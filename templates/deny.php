@@ -19,10 +19,14 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+
+
 ?>
 <div class="overlay">
 	<div class="error">
 		<h2><?php p($l->t('Access Denied'));?></h2>
-		<p><?php p($_['msg'])?></p>
+		<p><?php p( $l->t("You do not have access to this service")); ?></p>
+		<p><?php p( $l->t( $_['msg'] , array( $_['uid'], $_['group'])); ?></p>
 	</div>
 </div>

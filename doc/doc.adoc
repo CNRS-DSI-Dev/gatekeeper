@@ -64,7 +64,7 @@ GateKeeper peut alors fonctionner selon trois <<mode>>s principaux
 * mode _minimal_,
 * mode _porte ouverte_.
 
-== Détail des évaluations selon les modes
+=== Détail des évaluations selon les modes
 
 
 ==== Mode Liste Blanche

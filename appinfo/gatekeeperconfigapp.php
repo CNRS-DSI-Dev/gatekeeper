@@ -74,9 +74,14 @@ class GateKeeperConfigApp extends App {
             return new \OCA\GateKeeper\AppInfo\Interceptor(
             		$c->query('ServerContainer')->getUserSession(),
             		\OC_User::isLoggedIn(),
-            		$c->query('GateKeeperService')
+            		$c->query('GateKeeperService'),
+            		$c->query('L10N')
             	);
         });
+
+		$container->registerService('L10N', function($c) {
+			return $c->query('ServerContainer')->getL10N($c->query('AppName'));
+		});        
 
 
         $container->registerService('SettingsController', function($c) {

@@ -1,7 +1,19 @@
 "use strict";
 $('#gatekeeperForm') .ready(function () {
 
+
+
+
 	$( "#gkTabs" ).tabs();
+
+  var fmt = function(translationName, args) {
+    var formatted = $("#gk_translation span[name="+translationName+"]").text()
+    for( var arg in args ) {
+        formatted = formatted.replace("{" + arg + "}", args[arg]);
+    }
+    return formatted;
+  };
+    
 	
 	var display = function (msg, nature) {
   var id = '#gk_display_'+nature;
@@ -32,7 +44,7 @@ $('#gatekeeperForm') .ready(function () {
     $.post(url, {
       value: value
     }, function (result) {
-      display(value+' mode is selected', 'info');
+      display(fmt('mode_is_selected', [ value]), 'info');
       block.removeClass('gk_changed gk_error gk_saved');
       block.addClass('gk_saved');
       block.removeClass('gk_saved', 2000);
@@ -95,7 +107,7 @@ $('#gatekeeperForm') .ready(function () {
     li.addClass('gk_changed');
     postUpdate({group: grpId, action: 'rm', gt: mode2group[kind] }, 
       function() {
-        display(name+' removed  from '+kind, 'info');
+        display(fmt('group_removed_from', [name, kind]), 'info');
         showSuccess(li);
         li.remove();
       }
@@ -143,7 +155,7 @@ $('#gatekeeperForm') .ready(function () {
         var li = addListItem(kind, id, name, list);
         showSuccess(li);
         $('#gkGroupName_'+kind).attr('value','');
-        display(name+' added in '+kind, 'info');
+        display( fmt( 'group_added_in', [name, kind]), 'info');
       },
       null,
       function() {

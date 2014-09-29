@@ -36,12 +36,12 @@ function select($key) {
 		<fieldset>
 				<label class="label" for="mode"><?php p($l->t('Select Mode'));?></label>
 				<div class="block">
-					<label class="label" for="mode"><?php p($l->t('WhiteList'));?></label>
+					<label class="label" for="mode"><?php p($l->t('White List'));?></label>
 					<input type="radio" name="mode"  value="<?php p(GK::WHITELIST_MODE);?>" <?php p($selected[GK::WHITELIST_MODE]);?>>
 						<?php p($l->t('Only groups in this white list are allowed EXCEPT those in EXCLUSION list'));?>
 				</div>
 				<div class="block">
-					<label class="label" for="mode"><?php p($l->t('BlackList'));?></label>
+					<label class="label" for="mode"><?php p($l->t('Black List'));?></label>
 					<input type="radio" name="mode"  value="<?php p(GK::BLACKLIST_MODE);?>" <?php p($selected[GK::BLACKLIST_MODE]);?>>
 						<?php p($l->t('Only groups in this black list are denied PLUS those in EXCLUSION list'));?>
 				</div>
@@ -61,7 +61,7 @@ function select($key) {
 
 			<ul>
 				<li><a href="#gkTabs-1"><?php p($l->t('White List'));?></a></li>
-				<li><a href="#gkTabs-2"><?php p($l->t('Black list'));?></a></li>
+				<li><a href="#gkTabs-2"><?php p($l->t('Black List'));?></a></li>
 				<li><a href="#gkTabs-3"><?php p($l->t('Exclusion List'));?></a></li>			
 			</ul>
 
@@ -95,4 +95,9 @@ function select($key) {
 		</div>
 	</form>
 	<div id="gk_display_info"></div>
+	<div id="gk_translation" style="visibility: hidden;">
+		<span name="mode_is_selected"><?php p($l->t('Mode {0} is selected'));?></span>
+		<span name="group_removed_from"><?php p($l->t('Group {0} is removed from {1}'));?></span>
+		<span name="group_added_in"><?php p($l->t('Group {0} is added in {1}'));?></span>
+	</div>
 </div>

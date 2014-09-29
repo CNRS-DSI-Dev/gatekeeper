@@ -2,7 +2,7 @@
 <info>
     <id>gatekeeper</id>
     <name>GateKeeper</name>
-    <description>Open or close access according to group or uid</description>
+    <description>Open or close access according to user group</description>
     <version>1.1</version>
     <licence>AGPL</licence>
     <author>Marc DeXeT</author>
