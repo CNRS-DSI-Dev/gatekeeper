@@ -28,7 +28,8 @@ $app->registerRoutes($this, array(
  			
  			array('name' => 'settings#set_mode'	, 'url' =>	'/api/settings/mode/'	,   'verb' => 'POST'),
  			array('name' => 'settings#search_group'	, 'url' =>	'/api/settings/group'	,   'verb' => 'GET'),
- 			array('name' => 'settings#manage_group'	, 'url' =>	'/api/settings/group'	,   'verb' => 'POST')
+ 			array('name' => 'settings#manage_group'	, 'url' =>	'/api/settings/group'	,   'verb' => 'POST'),
+ 			array('name' => 'settings#set_delay'	, 'url' =>	'/api/settings/delay'	,   'verb' => 'POST')
  			
  		)
  	)

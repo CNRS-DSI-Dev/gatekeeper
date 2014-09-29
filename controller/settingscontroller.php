@@ -65,6 +65,28 @@ class SettingsController extends Controller {
 	/**
 	* @Ajax
 	*/
+	public function setDelay() {
+		\OC_Util::checkAdminUser();
+		$params = $this->request->post;
+		$value = isset($params['delay']) ? $params['delay'] : null;
+		$intVal = 0;
+		if ( is_numeric($value))  {
+			$intVal = intVal();
+		} else {
+			throw new  \Exception("delay $value is incorrect", 1);	
+		}
+
+		if ( $intVal < 0 )  {
+			$this->appConfig->deleteKey('gatekeeper','refresh_delay');
+		} else {
+			$this->appConfig->setValue('gatekeeper','refresh_delay',strval($intVal));
+		}
+		return new JSONResponse( array('status' => 'ok') );
+	}	
+
+	/**
+	* @Ajax
+	*/
 	public function searchGroup() {
 		\OC_Util::checkAdminUser();
 		$params = $this->request->get;

@@ -49,7 +49,8 @@ class GateKeeperConfigApp extends App {
 				$c->query('ServerContainer')->getSession(),
 				$c->query('AccessObjectMapper'), 
 				$c->query('GroupManager'),
-				GKHelper::isRemote()
+				GKHelper::isRemote(),
+				$c->query('ServerContainer')->getAppConfig()->getValue('gatekeeper', 'refresh_delay')
 				);
 		});
 

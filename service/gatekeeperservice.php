@@ -38,9 +38,10 @@ class GateKeeperService {
 	var $accessObjectMapper;
 	var $groupManager;
 	var $remote;
+	var $refreshDelay = false;
 	var $delay = 30;
 	
-	public function __construct( $mode, $session, $accessObjectMapper, $groupManager, $remote=FALSE) {
+	public function __construct( $mode, $session, $accessObjectMapper, $groupManager, $remote=FALSE, $refreshDelay=-1) {
 		if ( ! is_string($mode) || ! GK::checkMode($mode) ) {
 			throw new \Exception("Mode $mode is invalid");
 		}
@@ -61,23 +62,24 @@ class GateKeeperService {
 		$this->groupManager = $groupManager;
 		$this->cache = array();
 		$this->remote = $remote;
+		$this->refreshDelay = intval($refreshDelay);
 	}
 
 
 
 	public function hasToRefresh() {
 		$refresh = true;
-		if ( $this->remote ) {
+		if ( $this->remote || $this->refreshDelay > 0 ) {
 			$now = time();
 			
-			$timestamp = $this->session->get('gk_remote_ts');
+			$timestamp = $this->session->get('gt_refresh_timer ');
 			// creation
 			if ( is_null($timestamp)) {
-				$this->session->set('gk_remote_ts', $now);
+				$this->session->set('gt_refresh_timer ', $now);
 			} else if ( $now - $timestamp < $this->delay ) {
 				$refresh = false;
 			} else {
-				$this->session->set('gk_remote_ts', $now);
+				$this->session->set('gt_refresh_timer ', $now);
 			}
 		}
 		return $refresh;

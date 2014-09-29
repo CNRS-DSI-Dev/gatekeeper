@@ -56,6 +56,12 @@ function select($key) {
 						<?php p($l->t('No checking is done'));?>
 				</div>
 		</fieldset>
+		<fieldset>
+			<div class="block">
+				<label><?php p($l->t("Refresh Delay")); ?></label>
+				<input id="gk_refresh_delay" type="text" name="refreshDelay"  value="<?php p($_['refreshDelay']);?>">
+			</div>
+		</fieldset>
 		<!-- TABULATIONS -->
 		<div id="gkTabs">
 

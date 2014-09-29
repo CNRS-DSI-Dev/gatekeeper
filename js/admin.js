@@ -117,6 +117,27 @@ $('#gatekeeperForm') .ready(function () {
 
   }
 
+  var onRefreshDelay = function(e) {
+    var delayUrl = OC.generateUrl('apps/gatekeeper/api/settings/delay');
+    var block = $(e.target).parent();
+    var delay = $(e.target).val();
+
+    block.removeClass('gk_changed gk_error gk_saved');
+    block.addClass('gk_changed');
+     $.post(delayUrl, { delay: delay })
+    .done(function(data){
+      block.removeClass('gk_changed gk_error gk_saved');
+      block.addClass('gk_saved');
+      block.removeClass('gk_saved', 2000);
+    })
+    .fail(function(jqXHR,  textStatus, errorThrown){
+      block.removeClass('gk_changed gk_error gk_saved');
+      block.addClass('gk_error');
+      $('#gk_display_error') .text(jqXHR.responseJSON.msg);
+    });
+
+  }
+
   var showSuccess = function(li) {
       li.removeClass('gk_changed gk_error gk_saved');
       li.addClass('gk_saved');
@@ -226,5 +247,8 @@ $('#gatekeeperForm') .ready(function () {
   });  
 
 
+  $('#gk_refresh_delay').change( function(e) {
+    onRefreshDelay(e);
+  });
 
 });
