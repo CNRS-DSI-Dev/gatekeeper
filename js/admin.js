@@ -70,7 +70,7 @@ $('#gatekeeperForm') .ready(function () {
   */
   var addListItem = function(kind, grpId, grpName, list) {
     var id = 'gk_action_'+kind+'_'+grpId;
-    var img = '<img src="/core/core/img/actions/delete.svg" class="svg action">';
+    var img = '<img src="/core/img/actions/delete.svg" class="svg action">';
     var span = '<span>'+grpName+'</span>';
     var li = $('<li><a id="'+id+'" class="action delete">'+img+'</a>'+span+'</li>');
     li.appendTo(list);
