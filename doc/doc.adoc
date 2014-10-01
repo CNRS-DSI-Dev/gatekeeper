@@ -177,6 +177,12 @@ Dans l'écran d'administration, choisir un mode
 
 Pour plus de détails, cf <<Détail des évaluations selon les modes>>
 
+=== Décider d'un delai de revérification
+
+Au bout du delai indiqué en seconde, toute nouvelle requête donne lieu à une réévaluation.
+
+Une valeur nulle, 0 ou négative signifie à la prochaine authentification.
+
 === Gestion des liste
 
 Dans l'écran d'administration, cliquer sur l'onglet du mode sélectionné

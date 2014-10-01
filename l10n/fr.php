@@ -20,5 +20,5 @@ $TRANSLATIONS = array(
 	"Please contact your administrator with theses informations: " => "Merci de contacter votre administrateur avec ces informations: ",
 	"denied with uid=%s IP=%s." => "Interdit avec l'identifiant %s, adresse IP %s",
 	"excluded with uid=%s IP=%s." => "Rejeté avec l'identifiant %s, adresse IP %s",
-	"not allowed uid=%s IP=%s."  => "Non autorisé avec l'identifiant %s, adresse IP %s",
+	"not allowed with uid=%s IP=%s."  => "Non autorisé avec l'identifiant %s, adresse IP %s",
 );
