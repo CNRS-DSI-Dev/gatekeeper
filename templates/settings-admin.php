@@ -23,11 +23,12 @@ use \OCA\GateKeeper\AppInfo\GKConstants as GK;
 
 \OCP\Util::addScript('gatekeeper', 'admin');
 \OCP\Util::addStyle('gatekeeper', 'gk');
-$selected = array(GK::WHITELIST_MODE => '', GK::BLACKLIST_MODE => '', GK::OPENED_GATE_MODE => '', GK::MINIMAL_MODE => '');
-$selected[$_['selected']] = 'checked';
-function select($key) { 
-	p($selected[$key]); 
-}
+$checked = array(GK::WHITELIST_MODE => '', GK::BLACKLIST_MODE => '', GK::OPENED_GATE_MODE => '', GK::MINIMAL_MODE => '');
+$checked[$_['checked_mode']] = 'checked';
+
+$selected = array('owncloud' => '','syslog' => '','none' => '');
+$selected[$_['selected_logger']] = 'selected';
+
 ?>
 <div class="section">
 	<h2><?php p($l->t('GateKeeper'));?></h2>
@@ -37,22 +38,22 @@ function select($key) {
 				<label class="label" for="mode"><?php p($l->t('Select Mode'));?></label>
 				<div class="block">
 					<label class="label" for="mode"><?php p($l->t('White List'));?></label>
-					<input type="radio" name="mode"  value="<?php p(GK::WHITELIST_MODE);?>" <?php p($selected[GK::WHITELIST_MODE]);?>>
+					<input type="radio" name="mode"  value="<?php p(GK::WHITELIST_MODE);?>" <?php p($checked[GK::WHITELIST_MODE]);?>>
 						<?php p($l->t('Only groups in this white list are allowed EXCEPT those in EXCLUSION list'));?>
 				</div>
 				<div class="block">
 					<label class="label" for="mode"><?php p($l->t('Black List'));?></label>
-					<input type="radio" name="mode"  value="<?php p(GK::BLACKLIST_MODE);?>" <?php p($selected[GK::BLACKLIST_MODE]);?>>
+					<input type="radio" name="mode"  value="<?php p(GK::BLACKLIST_MODE);?>" <?php p($checked[GK::BLACKLIST_MODE]);?>>
 						<?php p($l->t('Only groups in this black list are denied PLUS those in EXCLUSION list'));?>
 				</div>
 				<div class="block">
 					<label class="label" for="mode"><?php p($l->t('Minimal'));?></label>
-					<input type="radio" name="mode"  value="<?php p(GK::MINIMAL_MODE);?>" <?php p($selected[GK::MINIMAL_MODE]);?>>
+					<input type="radio" name="mode"  value="<?php p(GK::MINIMAL_MODE);?>" <?php p($checked[GK::MINIMAL_MODE]);?>>
 						<?php p($l->t('Only groups in EXCLUSION list are denied'));?>
 				</div>
 				<div class="block">
 					<label class="label" for="mode"><?php p($l->t('Opengate'));?></label>
-					<input type="radio" name="mode"  value="<?php p(GK::OPENED_GATE_MODE);?>" <?php p($selected[GK::OPENED_GATE_MODE]);?>>
+					<input type="radio" name="mode"  value="<?php p(GK::OPENED_GATE_MODE);?>" <?php p($checked[GK::OPENED_GATE_MODE]);?>>
 						<?php p($l->t('No checking is done'));?>
 				</div>
 		</fieldset>
@@ -62,6 +63,17 @@ function select($key) {
 				<input id="gk_refresh_delay" type="text" name="refreshDelay"  value="<?php p($_['refreshDelay']);?>">
 			</div>
 		</fieldset>
+		<fieldset>
+			<div class="block">
+				<label><?php p($l->t("Deny Logger Mode")); ?></label>
+				<select id="gk_deny_logger" type="text" name="refreshDelay"  value="<?php p($_['denyLogger']);?>">
+					<?php foreach ($selected as $key => $option) { ?>
+						<option value="<?php p($key);?>" <?php p($selected[$key]);?>><?php p($key);?></option>
+					<?php } ?>
+					?>
+				</select>
+			</div>
+		</fieldset>		
 		<!-- TABULATIONS -->
 		<div id="gkTabs">
 
@@ -102,7 +114,7 @@ function select($key) {
 	</form>
 	<div id="gk_display_info"></div>
 	<div id="gk_translation" style="visibility: hidden;">
-		<span name="mode_is_selected"><?php p($l->t('Mode {0} is selected'));?></span>
+		<span name="mode_is_checked"><?php p($l->t('Mode {0} is checked'));?></span>
 		<span name="group_removed_from"><?php p($l->t('Group {0} is removed from {1}'));?></span>
 		<span name="group_added_in"><?php p($l->t('Group {0} is added in {1}'));?></span>
 	</div>

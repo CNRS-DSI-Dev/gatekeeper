@@ -44,10 +44,6 @@ class GateKeeperHooks {
 		$this->gateKeeperService->endCycle();
 	}
 
-	function onPostLogin (\OC\User\User $user) {
-		//$this->logger->info('onPostLogin '.$user);		
-	}
-
 	
 	function registerForUserEvents($userSession) {
 		$obj = $this;
@@ -57,10 +53,6 @@ class GateKeeperHooks {
 
 		$userSession->listen('\OC\User', 'preRememberedLogin', function( $uid )  use ($obj) {
 			return $obj->onPreLogin($uid); 
-		});
-
-		$userSession->listen('\OC\User', 'postLogin', function($user, $password) use(&$obj) { 
-			return $obj->onPostLogin($user); 
 		});
 
 		$userSession->listen('\OC\User', 'logout', function() use(&$obj) { 

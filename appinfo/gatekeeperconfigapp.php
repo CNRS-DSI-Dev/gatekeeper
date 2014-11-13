@@ -76,7 +76,8 @@ class GateKeeperConfigApp extends App {
             		$c->query('ServerContainer')->getUserSession(),
             		\OC_User::isLoggedIn(),
             		$c->query('GateKeeperService'),
-            		$c->query('L10N')
+            		$c->query('L10N'),
+            		$c->query('DenyLogger')
             	);
         });
 
@@ -93,6 +94,17 @@ class GateKeeperConfigApp extends App {
             		$c->query('GroupManager')
             	);
         });
+
+      
+        $container->registerService('DenyLoggerFactory', function($c) {
+        	return new \OCA\GateKeeper\Lib\DenyLoggerFactory(
+        			$c->query('ServerContainer')->getAppConfig()
+        		);
+        });
+
+        $container->registerService('DenyLogger', function($c) {
+            return $c->query('DenyLoggerFactory')->getInstance();
+        });        
 	}
 
 

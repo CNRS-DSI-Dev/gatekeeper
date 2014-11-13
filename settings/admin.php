@@ -26,7 +26,8 @@ $tmpl = new OCP\Template('gatekeeper', 'settings-admin');
 $appName='gatekeeper';
 $app = new OCA\GateKeeper\AppInfo\GateKeeperConfigApp();
 
-$tmpl->assign('selected', OCP\Config::getAppValue($appName, 'mode'));
+$tmpl->assign('checked_mode', 	OCP\Config::getAppValue($appName, 'mode'));
+$tmpl->assign('selected_logger', OCP\Config::getAppValue($appName, 'logger'));
 
 $accessObjectMapper = $app->getContainer()->query('AccessObjectMapper');
 $whitelist = $accessObjectMapper->findGroupNamesInMode(GK::WHITELIST_GROUP_TYPE);

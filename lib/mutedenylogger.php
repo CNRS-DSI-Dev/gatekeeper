@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ownCloud - 
  *
@@ -19,18 +20,13 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-namespace OCA\GateKeeper\AppInfo;
 
-$app = new GateKeeperConfigApp();
-// cf. https://github.com/owncloud/documentation/blob/master/developer_manual/app/routes.rst
-$app->registerRoutes($this, array(
- 	'routes' => array(
- 			
- 			array('name' => 'settings#set_mode'	, 'url' =>	'/api/settings/mode/'	,   'verb' => 'POST'),
- 			array('name' => 'settings#search_group'	, 'url' =>	'/api/settings/group'	,   'verb' => 'GET'),
- 			array('name' => 'settings#manage_group'	, 'url' =>	'/api/settings/group'	,   'verb' => 'POST'),
- 			array('name' => 'settings#set_delay'	, 'url' =>	'/api/settings/delay'	,   'verb' => 'POST'),
- 			array('name' => 'settings#set_logger'	, 'url' =>	'/api/settings/logger'	,   'verb' => 'POST')
- 		)
- 	)
- );
+namespace OCA\GateKeeper\Lib;
+
+class MuteDenyLogger implements DenyLogger {
+
+ 	public function write($message, $level = \OC_LOG::INFO) {
+ 		// does nothing
+ 	}
+
+ }

@@ -35,6 +35,7 @@ class SettingsController extends Controller {
 	var $appConfig;
 	var $accessObjectMapper;
 	var $groupManager;
+	var $loggers = array('owncloud','syslog','none');
 
 	public function __construct($request, $appConfig, $accessObjectMapper, $groupManager) {
 		parent::__construct('gatekeeper', $request);
@@ -42,6 +43,25 @@ class SettingsController extends Controller {
 		$this->accessObjectMapper = $accessObjectMapper;
 		$this->groupManager = $groupManager;
 	}
+
+
+	/**
+	* @Ajax
+	*/
+	public function setLogger() {
+		\OC_Util::checkAdminUser();
+		$params = $this->request->post;
+		$value = isset($params['logger']) ? $params['logger'] : null;
+		if ( is_null($value) )  {
+			return new JSONResponse( array("msg" => "value is null"), Http::STATUS_BAD_REQUEST);
+		}
+		if ( ! in_array($value, $this->loggers)) {
+			return new JSONResponse( array("msg" => "value is incorrect"), Http::STATUS_BAD_REQUEST);
+		}
+		$this->appConfig->setValue('gatekeeper','logger',$value);
+		return new JSONResponse( array('status' => 'ok') );
+	}
+
 
 
 	/**

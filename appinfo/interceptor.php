@@ -28,7 +28,9 @@ class Interceptor {
 	var $service;
 	var $userSession;
 	var $l10n;
+	var $denyLogger;
 	var $throwExceptionToExit;
+
 
 	/**
 	* @param \OCP\IUser
@@ -38,11 +40,12 @@ class Interceptor {
 	* @param bool $throwExceptionToExit Throw Exception instead of exit (usefull for unit test)
 	*
 	*/
-	public function __construct($userSession, $isLoggedIn, $service, $l10n, $throwExceptionToExit = false) {
+	public function __construct($userSession, $isLoggedIn, $service, $l10n, $denyLogger, $throwExceptionToExit = false) {
 		$this->service = $service;
 		$this->isLoggedIn = $isLoggedIn;
 		$this->userSession = $userSession;
 		$this->l10n = $l10n;
+		$this->denyLogger = $denyLogger;
 		
 	}
 
@@ -68,8 +71,13 @@ class Interceptor {
 				//=============================
 
 				$remote = GKHelper::isRemote();
+				$this->denyLogger->write("uid=".$respons->getUid()
+					.",cause=".$respons->getCause()
+					.",IP=".$this->getIPAddress()
+					.",client=".$remote);
+
 				if ( $remote ) {
-					$this->denyOnRemote($uid, $respons);
+					$this->denyOnRemote($respons);
 				} else if ( ! $respons->isEmitted() ) {
 					$this->denyOnWeb($respons);
 				}
@@ -89,7 +97,7 @@ class Interceptor {
 	/**
 	* Ends dialog when session is in remote mode
 	*/
-	function denyOnRemote($uid, $respons) {
+	function denyOnRemote($respons) {
 		throw new \Exception("Access is denied. ".$respons->getCause());
 	}
 
