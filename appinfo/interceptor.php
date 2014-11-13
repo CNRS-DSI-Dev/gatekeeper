@@ -71,10 +71,11 @@ class Interceptor {
 				//=============================
 
 				$remote = GKHelper::isRemote();
-				$this->denyLogger->write("uid=".$respons->getUid()
-					.",cause=".$respons->getCause()
-					.",IP=".$this->getIPAddress()
-					.",client=".$remote);
+				$this->denyLogger->write("[uid=".$respons->getUid()
+					."][cause=".$respons->getCause()
+					."][groups=".$respons->getGroup()
+					."][IP=".$this->getIPAddress()
+					."[remote=".$remote."]");
 
 				if ( $remote ) {
 					$this->denyOnRemote($respons);
