@@ -71,7 +71,7 @@ class Interceptor {
 				//=============================
 
 				$remote = GKHelper::isRemote();
-				$this->denyLogger->write("[ts=".date("Y/m/d H:i:s")."]"
+				$this->denyLogger->write("[ts=".date("YmdHis")."]"
 					."[uid=".$respons->getUid()
 					."][cause=".$respons->getCause()
 					."][groups=".$respons->getGroup()
