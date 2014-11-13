@@ -183,6 +183,16 @@ Au bout du delai indiqué en seconde, toute nouvelle requête donne lieu à une 
 
 Une valeur nulle, 0 ou négative signifie à la prochaine authentification.
 
+=== Décider d'un journal 
+
+Il est possible d'historiser les refus.
+
+Trois possibilités :
+
+* _owncloud_: utilisation du journal owncloud.log
+* _syslog_: utilisation du journal système à l'aide de http://php.net/manual/en/function.openlog.php[openlog] et http://php.net/manual/en/function.syslog.php[syslog]
+* _none_: aucun journal
+
 === Gestion des liste
 
 Dans l'écran d'administration, cliquer sur l'onglet du mode sélectionné
