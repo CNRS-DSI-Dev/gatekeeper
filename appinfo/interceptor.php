@@ -75,7 +75,7 @@ class Interceptor {
 					."][cause=".$respons->getCause()
 					."][groups=".$respons->getGroup()
 					."][IP=".$this->getIPAddress()
-					."[remote=".$remote."]");
+					."[remote=".($remote ? 1 : 0 )."]");
 
 				if ( $remote ) {
 					$this->denyOnRemote($respons);
