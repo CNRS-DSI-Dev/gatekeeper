@@ -57,13 +57,13 @@ class SyslogDenyLogger implements DenyLogger {
 	 * Init class data
 	 */
 	private static function init() {
-		openlog('gatekeeper', LOG_ODELAY, LOG_USER);
+		openlog('gatekeeper', LOG_NDELAY, LOG_USER);
 		// Close at shutdown
 		register_shutdown_function('closelog');
 	}
 
 	private static function doWrite($message, $level=OC_Log::INFO ) {
 		$syslog_level = self::$levels[$level];
-		syslog($syslog_level, '{'.$app.'} '.$message);
+		syslog($syslog_level, $message);
 	}
 }

@@ -25,7 +25,7 @@ namespace OCA\GateKeeper\Lib;
 class DenyLoggerFactory {
 
 	public function __construct($appConfig) {
-		$this->useLogger = $appConfig->getValue('gatekeeper', 'deny.logger','owncloud') ;
+		$this->useLogger = $appConfig->getValue('gatekeeper', 'logger','owncloud') ;
 	}
 
 	public function getInstance() {
@@ -33,7 +33,7 @@ class DenyLoggerFactory {
 		if ( $type === 'owncloud' )   {
 			return new OwncloudDenyLogger();
 		} else if ( $type === 'syslog') {
-			return new SyslogDenyLogger();
+			return SyslogDenyLogger::getInstance();
 		} else if ( $type === 'none') {
 			return new MuteDenyLogger();
 		} else {
