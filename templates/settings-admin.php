@@ -66,7 +66,7 @@ $selected[$_['selected_logger']] = 'selected';
 		<fieldset>
 			<div class="block">
 				<label><?php p($l->t("Deny Logger Mode")); ?></label>
-				<select id="gk_deny_logger" type="text" name="refreshDelay"  value="<?php p($_['denyLogger']);?>">
+				<select id="gk_deny_logger" type="text" name="denyLogger">
 					<?php foreach ($selected as $key => $option) { ?>
 						<option value="<?php p($key);?>" <?php p($selected[$key]);?>><?php p($key);?></option>
 					<?php } ?>

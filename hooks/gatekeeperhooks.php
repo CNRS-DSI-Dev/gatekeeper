@@ -20,7 +20,6 @@
  *
  */
 namespace OCA\GateKeeper\Hooks;
-use OCA\GateKeeper\Lib\GKHelper;
 
 class GateKeeperHooks {
 
@@ -51,7 +50,7 @@ class GateKeeperHooks {
 			return $obj->onPreLogin($uid); 
 		});
 
-		$userSession->listen('\OC\User', 'preRememberedLogin', function( $uid )  use ($obj) {
+		$userSession->listen('\OC\User', 'preRememberedLogin', function( $uid )  use (&$obj) {
 			return $obj->onPreLogin($uid); 
 		});
 

@@ -89,9 +89,12 @@ class SettingsController extends Controller {
 		\OC_Util::checkAdminUser();
 		$params = $this->request->post;
 		$value = isset($params['delay']) ? $params['delay'] : null;
+		if ( empty($value) ) {
+			$value = "-1";
+		}
 		$intVal = 0;
 		if ( is_numeric($value))  {
-			$intVal = intVal();
+			$intVal = intVal($value);
 		} else {
 			throw new  \Exception("delay $value is incorrect", 1);	
 		}

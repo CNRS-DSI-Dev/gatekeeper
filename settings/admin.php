@@ -28,6 +28,8 @@ $app = new OCA\GateKeeper\AppInfo\GateKeeperConfigApp();
 
 $tmpl->assign('checked_mode', 	OCP\Config::getAppValue($appName, 'mode'));
 $tmpl->assign('selected_logger', OCP\Config::getAppValue($appName, 'logger'));
+$tmpl->assign('refreshDelay', OCP\Config::getAppValue($appName, 'refresh_delay'));
+
 
 $accessObjectMapper = $app->getContainer()->query('AccessObjectMapper');
 $whitelist = $accessObjectMapper->findGroupNamesInMode(GK::WHITELIST_GROUP_TYPE);
