@@ -1,6 +1,6 @@
 <?php
 /**
- * ownCloud - 
+ * ownCloud -
  *
  * @author Marc DeXeT
  * @copyright 2014 DSI CNRS https://www.dsi.cnrs.fr
@@ -81,7 +81,7 @@ class AccessObjectMapper extends Mapper {
          $sql = 'SELECT * FROM `'.$this->getTableName().'` WHERE  `mode`=?';
          $params = array($mode);
         return $this->findEntities($sql, $params, $limit, $offset);
-    }    
+    }
 
     public function findGroupNamesLike($value, $limit=null, $offset=null) {
         $sql = 'SELECT name FROM `'.$this->getTableName().'` WHERE `name` LIKE ?';
@@ -89,11 +89,11 @@ class AccessObjectMapper extends Mapper {
         return $this->getNames($sql, $params, $limit, $offset);
     }
 
-    protected function getNames($sql, $params, $limit, $offset) {
+    protected function getNames($sql, $params, $limit=null, $offset=null) {
         $result = $this->execute($sql, $params, $limit, $offset);
 
         $names = array();
-        
+
         while($row = $result->fetch()){
             $names[] = $row['name'];
         }
