@@ -1,6 +1,6 @@
 <?php
 /**
- * ownCloud - 
+ * ownCloud -
  *
  * @author Marc DeXeT
  * @copyright 2014 DSI CNRS https://www.dsi.cnrs.fr
@@ -60,7 +60,7 @@ $selected[$_['selected_logger']] = 'selected';
 		<fieldset>
 			<div class="block">
 				<label><?php p($l->t("Refresh Delay")); ?></label>
-				<input id="gk_refresh_delay" type="text" name="refreshDelay"  value="<?php p($_['refreshDelay']);?>">
+				<input id="gk_refresh_delay" type="text" name="refreshDelay"  value="<?php if (!empty(p($_['refreshDelay']);)) { p($_['refreshDelay']); } ?>">
 			</div>
 		</fieldset>
 		<fieldset>
@@ -73,14 +73,14 @@ $selected[$_['selected_logger']] = 'selected';
 					?>
 				</select>
 			</div>
-		</fieldset>		
+		</fieldset>
 		<!-- TABULATIONS -->
 		<div id="gkTabs">
 
 			<ul>
 				<li><a href="#gkTabs-1"><?php p($l->t('White List'));?></a></li>
 				<li><a href="#gkTabs-2"><?php p($l->t('Black List'));?></a></li>
-				<li><a href="#gkTabs-3"><?php p($l->t('Exclusion List'));?></a></li>			
+				<li><a href="#gkTabs-3"><?php p($l->t('Exclusion List'));?></a></li>
 			</ul>
 
 			<fieldset id="gkTabs-1">
@@ -109,7 +109,7 @@ $selected[$_['selected_logger']] = 'selected';
 				<button type="button" id="gkLoadButton_exclusion"><?php p($l->t('Display List'));?></button>
 				<ul class="gk_ul_double" id="gkList_exclusion">
 				</ul>
-			</fieldset>			
+			</fieldset>
 		</div>
 	</form>
 	<div id="gk_display_info"></div>
