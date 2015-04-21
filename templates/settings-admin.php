@@ -60,7 +60,7 @@ $selected[$_['selected_logger']] = 'selected';
 		<fieldset>
 			<div class="block">
 				<label><?php p($l->t("Refresh Delay")); ?></label>
-				<input id="gk_refresh_delay" type="text" name="refreshDelay"  value="<?php if (!empty(p($_['refreshDelay']))) { p($_['refreshDelay']); } ?>">
+				<input id="gk_refresh_delay" type="text" name="refreshDelay"  value="<?php if (!empty($_['refreshDelay'])) { p($_['refreshDelay']); } ?>">
 			</div>
 		</fieldset>
 		<fieldset>
@@ -70,7 +70,6 @@ $selected[$_['selected_logger']] = 'selected';
 					<?php foreach ($selected as $key => $option) { ?>
 						<option value="<?php p($key);?>" <?php p($selected[$key]);?>><?php p($key);?></option>
 					<?php } ?>
-					?>
 				</select>
 			</div>
 		</fieldset>
