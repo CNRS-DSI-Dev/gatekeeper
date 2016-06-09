@@ -1,6 +1,6 @@
 <?php
 /**
- * ownCloud - 
+ * ownCloud -
  *
  * @author Marc DeXeT
  * @copyright 2014 DSI CNRS https://www.dsi.cnrs.fr
@@ -20,17 +20,17 @@
  *
  */
 namespace OCA\GateKeeper\Lib;
-use \OC_Log;
+// use \OC_Log;
 
 class SyslogDenyLogger implements DenyLogger {
 
 	static protected $levels = array(
-		OC_Log::DEBUG => LOG_DEBUG,
-		OC_Log::INFO => LOG_INFO,
-		OC_Log::WARN => LOG_WARNING,
-		OC_Log::ERROR => LOG_ERR,
-		OC_Log::FATAL => LOG_CRIT,
-	);	
+		\OCP\Util::DEBUG => LOG_DEBUG,
+		\OCP\Util::INFO => LOG_INFO,
+		\OCP\Util::WARN => LOG_WARNING,
+		\OCP\Util::ERROR => LOG_ERR,
+		\OCP\Util::FATAL => LOG_CRIT,
+	);
 
 	static private $_instance = null;
 
@@ -47,11 +47,11 @@ class SyslogDenyLogger implements DenyLogger {
 		return self::$_instance;
 	}
 
-	public function write($message, $level=OC_Log::INFO) {
+	public function write($message, $level=\OCP\Util::INFO) {
 		self::doWrite($message, $level);
 	}
 
-	
+
 
 	/**
 	 * Init class data
@@ -62,7 +62,7 @@ class SyslogDenyLogger implements DenyLogger {
 		register_shutdown_function('closelog');
 	}
 
-	private static function doWrite($message, $level=OC_Log::INFO ) {
+	private static function doWrite($message, $level=\OCP\Util::INFO ) {
 		$syslog_level = self::$levels[$level];
 		syslog($syslog_level, $message);
 	}

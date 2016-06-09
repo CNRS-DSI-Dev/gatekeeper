@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ownCloud - 
+ * ownCloud -
  *
  * @author Marc DeXeT
  * @copyright 2014 DSI CNRS https://www.dsi.cnrs.fr
@@ -25,7 +25,7 @@ namespace OCA\GateKeeper\Lib;
 
 class MuteDenyLogger implements DenyLogger {
 
- 	public function write($message, $level = \OC_LOG::INFO) {
+ 	public function write($message, $level = \OCP\Util::INFO) {
  		// does nothing
  	}
 
