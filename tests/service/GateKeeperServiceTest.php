@@ -1,6 +1,6 @@
 <?php
 /**
- * ownCloud - 
+ * ownCloud -
  *
  * @author Marc DeXeT
  * @copyright 2014 DSI CNRS https://www.dsi.cnrs.fr
@@ -24,7 +24,7 @@ namespace OCA\GateKeeper\Service;
 use \OCA\GateKeeper\AppInfo\GKConstants as GK;
 
 
-class GateKeeperServiceTests extends \PHPUnit_Framework_TestCase { 
+class GateKeeperServiceTests extends \Test\TestCase {
 
 	var $service;
 	var $session;
@@ -39,10 +39,10 @@ class GateKeeperServiceTests extends \PHPUnit_Framework_TestCase {
 
 		$this->groupManager = 	$this->getMockBuilder('\OC\Group\Manager')
 									->disableOriginalConstructor()
-									->getMock();								
+									->getMock();
 		$this->session = 	$this->getMockBuilder('\OCP\ISession')
 									->disableOriginalConstructor()
-									->getMock();								
+									->getMock();
 		$this->user = $this->getMockBuilder('\OC\User\User')
 								->disableOriginalConstructor()
 								->getMock();
@@ -67,7 +67,7 @@ class GateKeeperServiceTests extends \PHPUnit_Framework_TestCase {
 			);
 		$this->accessObjectMapper->expects( $this->any() )->method('isGroupInMode')->will( $this->returnValueMap($mockParmMap) ) ;
 
-		
+
 		$this->assertTrue($this->service->isGroupAllowed('grp0'));
 		$this->assertTrue($this->service->isGroupAllowed('grp1') === false);
 
@@ -90,7 +90,7 @@ class GateKeeperServiceTests extends \PHPUnit_Framework_TestCase {
 			);
 		$this->accessObjectMapper->expects( $this->any() )->method('isGroupInMode')->will( $this->returnValueMap($mockParmMap) ) ;
 
-		
+
 		$this->assertTrue($this->service->isGroupAllowed('grp0') === false );
 		$this->assertTrue($this->service->isGroupAllowed('grp1'));
 
@@ -99,7 +99,7 @@ class GateKeeperServiceTests extends \PHPUnit_Framework_TestCase {
 
 	public function testIsUserInMode_WHITELIST_group() {
 				//__setup
-		$this->setup_TEST_IsUserAllowed(GK::WHITELIST_MODE, 
+		$this->setup_TEST_IsUserAllowed(GK::WHITELIST_MODE,
 			array(
 				array('grp0', 	GK::WHITELIST_GROUP_TYPE, true),
 				array('grp1', GK::WHITELIST_GROUP_TYPE, false)
@@ -120,7 +120,7 @@ class GateKeeperServiceTests extends \PHPUnit_Framework_TestCase {
 
 	public function testIsUserInMode_WHITELIST_group_false() {
 				//__setup
-		$this->setup_TEST_IsUserAllowed(GK::WHITELIST_MODE, 
+		$this->setup_TEST_IsUserAllowed(GK::WHITELIST_MODE,
 			array(
 				array('grp1', GK::WHITELIST_GROUP_TYPE, false)
 			)
@@ -145,7 +145,7 @@ class GateKeeperServiceTests extends \PHPUnit_Framework_TestCase {
 	*/
 	public function testIsUserInMode_WHITELIST_EXCLUSION() {
 				//__setup
-		$this->setup_TEST_IsUserAllowed(GK::WHITELIST_MODE, 
+		$this->setup_TEST_IsUserAllowed(GK::WHITELIST_MODE,
 			array(
 				array('grp0', 	GK::WHITELIST_GROUP_TYPE, true),
 				array('grp1', GK::WHITELIST_GROUP_TYPE, false)
@@ -155,7 +155,7 @@ class GateKeeperServiceTests extends \PHPUnit_Framework_TestCase {
 						->method('getUserGroupIds')
 						->willReturn(array('grp0', 'grp1', 'badguys'));
 
-		$this->accessObjectMapper->expects( $this->any() )->method('findExclusionGroups')->willReturn( array('badguys') ) ;						
+		$this->accessObjectMapper->expects( $this->any() )->method('findExclusionGroups')->willReturn( array('badguys') ) ;
 
 		//__WEN__
 		$respons = $this->service->isUserAllowed($this->user);
@@ -169,7 +169,7 @@ class GateKeeperServiceTests extends \PHPUnit_Framework_TestCase {
 
 	public function testIsUserInMode_BLACKLIST_group() {
 				//__setup
-		$this->setup_TEST_IsUserAllowed(GK::BLACKLIST_MODE, 
+		$this->setup_TEST_IsUserAllowed(GK::BLACKLIST_MODE,
 			array(
 				array('grp0', GK::BLACKLIST_GROUP_TYPE, true),
 				array('grp1', GK::BLACKLIST_GROUP_TYPE, false)
@@ -191,7 +191,7 @@ class GateKeeperServiceTests extends \PHPUnit_Framework_TestCase {
 
 	public function testIsUserInMode_BLACKLIST_group_none() {
 				//__setup
-		$this->setup_TEST_IsUserAllowed(GK::BLACKLIST_MODE, 
+		$this->setup_TEST_IsUserAllowed(GK::BLACKLIST_MODE,
 			array(
 				array('grp0', 	GK::BLACKLIST_GROUP_TYPE, false),
 				array('grp1', GK::BLACKLIST_GROUP_TYPE, false)

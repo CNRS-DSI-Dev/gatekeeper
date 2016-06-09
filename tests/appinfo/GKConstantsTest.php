@@ -1,6 +1,6 @@
 <?php
 /**
- * ownCloud - 
+ * ownCloud -
  *
  * @author Marc DeXeT
  * @copyright 2014 DSI CNRS https://www.dsi.cnrs.fr
@@ -24,7 +24,7 @@ namespace OCA\GateKeeper\Service;
 use \OCA\GateKeeper\AppInfo\GKConstants as GK;
 
 
-class GKConstantsTest extends \PHPUnit_Framework_TestCase {
+class GKConstantsTest extends \Test\TestCase {
 
 
 	public function testCheckMode() {
