@@ -1,6 +1,6 @@
 <?php
 /**
- * ownCloud - 
+ * ownCloud -
  *
  * @author Marc DeXeT
  * @copyright 2014 DSI CNRS https://www.dsi.cnrs.fr
@@ -27,7 +27,7 @@ use \OCA\GateKeeper\Lib\GKHelper;
 /**
  *
  */
-class GateKeeperConfigApp extends App {	
+class GateKeeperConfigApp extends App {
 
 	public function __construct(array $urlParams=array()){
 		parent::__construct('gatekeeper', $urlParams);
@@ -47,7 +47,7 @@ class GateKeeperConfigApp extends App {
 			return new \OCA\GateKeeper\Service\GateKeeperService(
 				$c->query('ServerContainer')->getAppConfig()->getValue('gatekeeper', 'mode' ),
 				$c->query('ServerContainer')->getSession(),
-				$c->query('AccessObjectMapper'), 
+				$c->query('AccessObjectMapper'),
 				$c->query('GroupManager'),
 				GKHelper::isRemote(),
 				$c->query('ServerContainer')->getAppConfig()->getValue('gatekeeper', 'refresh_delay')
@@ -63,10 +63,10 @@ class GateKeeperConfigApp extends App {
 
 		// groupManager
 		$container->registerService('GroupManager', function($c) {
-			return \OC_Group::getManager();
+            return \OC::$server->getGroupManager();
 		});
 
-		// - logger - 
+		// - logger -
 		$container->registerService('Logger', function($c) {
             return $c->query('ServerContainer')->getLogger();
         });
@@ -83,7 +83,7 @@ class GateKeeperConfigApp extends App {
 
 		$container->registerService('L10N', function($c) {
 			return $c->query('ServerContainer')->getL10N($c->query('AppName'));
-		});        
+		});
 
 
         $container->registerService('SettingsController', function($c) {
@@ -95,7 +95,7 @@ class GateKeeperConfigApp extends App {
             	);
         });
 
-      
+
         $container->registerService('DenyLoggerFactory', function($c) {
         	return new \OCA\GateKeeper\Lib\DenyLoggerFactory(
         			$c->query('ServerContainer')->getAppConfig()
@@ -104,14 +104,14 @@ class GateKeeperConfigApp extends App {
 
         $container->registerService('DenyLogger', function($c) {
             return $c->query('DenyLoggerFactory')->getInstance();
-        });        
+        });
 	}
 
 
 	public function getUserSession() {
 		return $this->getContainer()->getServer()->getUserSession();
 	}
-	
+
 	public function getUser() {
 		return $this->getContainer()->getServer()->getUserSession()->getUser();
 	}
@@ -121,7 +121,7 @@ class GateKeeperConfigApp extends App {
 	}
 
 	public function getGroupManager() {
-		return $this->getContainer()->query('GroupManager');	
+		return $this->getContainer()->query('GroupManager');
 	}
 
 	public function isGateOpened() {
